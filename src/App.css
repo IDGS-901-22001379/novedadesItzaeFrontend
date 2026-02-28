@@ -1,0 +1,6 @@
+/* src/App.css */
+/* Debe ser mínimo para no pisar Tailwind */
+
+#root {
+  min-height: 100vh;
+}
