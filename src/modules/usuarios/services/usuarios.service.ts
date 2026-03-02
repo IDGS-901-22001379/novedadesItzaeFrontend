@@ -58,8 +58,17 @@ export const usuariosService = {
   },
 
   // PATCH /usuarios/{id_usuario}/password
+    // PATCH /usuarios/{id_usuario}/password
   async cambiarPassword(id_usuario: number, payload: UserPasswordUpdate): Promise<string> {
-    const { data } = await httpClient.patch<string>(`/usuarios/${id_usuario}/password`, payload);
-    return data;
+    const { data } = await httpClient.patch(`/usuarios/${id_usuario}/password`, payload);
+
+    // Puede venir string o { ok, message }
+    if (typeof data === "string") return data;
+
+    if (data && typeof data === "object" && "message" in (data )) {
+      return String((data ).message);
+    }
+
+    return "Contraseña actualizada.";
   },
 };

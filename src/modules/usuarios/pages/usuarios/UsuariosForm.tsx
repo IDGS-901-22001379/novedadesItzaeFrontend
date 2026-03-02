@@ -1,134 +1,128 @@
 // src/modules/usuarios/pages/usuarios/UsuariosForm.tsx
-// Formulario reutilizable para Crear / Editar usuarios.
-// Modo "create": POST /usuarios (incluye password)
-// Modo "edit":   PUT /usuarios/{id_usuario} (sin password)
+// Formulario de usuarios.
+// Responsabilidades:
+// - CREAR: registrar usuario (empleado por nombre, rol, usuario, nombre en ticket, teléfono, contraseña).
+// - EDITAR: editar usuario (mismo diseño que crear, precargado, sin contraseña visible).
+// - EDITAR: cambiar contraseña con 2 campos (nueva + confirmar) y botón verde Guardar.
+// - VER: solo lectura, muestra toda la información excepto contraseña.
 
-import { useEffect, useMemo, useState } from "react";
-import { usuariosService } from "../../services/usuarios.service";
+import { useMemo, useState } from "react";
 import type { User, UserCreate, UserUpdate } from "../../types/usuarios.types";
+import { usuariosService } from "../../services/usuarios.service";
+import { ROLES } from "../../constants/roles";
+import EmpleadoAutocomplete from "../../components/usuarios/EmpleadoAutocomplete";
 
-type Mode = "create" | "edit";
+export type UsuariosFormModo = "CREAR" | "EDITAR" | "VER";
 
 type Props = {
-  mode: Mode;
-  user?: User | null;
-
-  onCancel: () => void;
+  modo: UsuariosFormModo;
+  initialUser: User | null;
   onSuccess: () => void;
-
-  roleOptions?: number[];
+  onCancel: () => void;
 };
 
-type FieldErrors = Partial<Record<keyof (UserCreate & UserUpdate), string>> & {
-  general?: string;
+type FormState = {
+  id_empleado: number;
+  empleado_nombre: string;
+
+  id_rol: number;
+  username: string;
+  nombre_en_ticket: string;
+  telefono_opcional: string;
+
+  password: string; // solo CREAR
 };
 
-function isNonEmpty(v: string) {
-  return v.trim().length > 0;
+function buildInitialForm(modo: UsuariosFormModo, u: User | null): FormState {
+  if ((modo === "EDITAR" || modo === "VER") && u) {
+    const idEmp = u.id_empleado ?? 0;
+    return {
+      id_empleado: idEmp,
+      empleado_nombre: idEmp > 0 ? `Empleado #${idEmp}` : "",
+
+      id_rol: u.id_rol ?? 1,
+      username: u.username ?? "",
+      nombre_en_ticket: u.nombre_en_ticket ?? "",
+      telefono_opcional: u.telefono_opcional ?? "",
+
+      password: "",
+    };
+  }
+
+  return {
+    id_empleado: 0,
+    empleado_nombre: "",
+
+    id_rol: 1,
+    username: "",
+    nombre_en_ticket: "",
+    telefono_opcional: "",
+
+    password: "",
+  };
 }
 
 export default function UsuariosForm({
-  mode,
-  user,
-  onCancel,
+  modo,
+  initialUser,
   onSuccess,
-  roleOptions,
+  onCancel,
 }: Props) {
-  const isEdit = mode === "edit";
+  const readOnly = modo === "VER";
 
-  const [id_empleado, setIdEmpleado] = useState<string>("");
-  const [id_rol, setIdRol] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [nombre_en_ticket, setNombreEnTicket] = useState<string>("");
-  const [telefono_opcional, setTelefonoOpcional] = useState<string>("");
-
+  const [form, setForm] = useState<FormState>(() =>
+    buildInitialForm(modo, initialUser),
+  );
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<FieldErrors>({});
+  const [msgError, setMsgError] = useState("");
 
-  const title = useMemo(() => {
-    if (isEdit) return "Editar usuario";
-    return "Nuevo usuario";
-  }, [isEdit]);
+  // Password (solo editar)
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPass, setChangingPass] = useState(false);
+  const [msgPass, setMsgPass] = useState<string>("");
 
-  useEffect(() => {
-    if (!isEdit) return;
+  const subtitulo = useMemo(() => {
+    if (modo === "CREAR") return "Registrar usuario";
+    if (modo === "EDITAR")
+      return `Editar usuario: ${initialUser?.username ?? ""}`;
+    return `Visualizar usuario: ${initialUser?.username ?? ""}`;
+  }, [modo, initialUser]);
 
-    setIdEmpleado(user?.id_empleado ? String(user.id_empleado) : "");
-    setIdRol(user?.id_rol ? String(user.id_rol) : "");
-    setUsername(user?.username ?? "");
-    setNombreEnTicket(user?.nombre_en_ticket ?? "");
-    setTelefonoOpcional(user?.telefono_opcional ?? "");
-    setPassword("");
-    setErrors({});
-  }, [isEdit, user]);
+  function validarCrearEditar(): string {
+    if (!form.username.trim()) return "Te falta registrar el usuario.";
+    if (!form.nombre_en_ticket.trim())
+      return "Te falta registrar el nombre en ticket.";
+    if (!form.id_rol || form.id_rol <= 0) return "Te falta seleccionar el rol.";
 
-  useEffect(() => {
-    if (isEdit) return;
-
-    setIdEmpleado("");
-    setIdRol("");
-    setUsername("");
-    setPassword("");
-    setNombreEnTicket("");
-    setTelefonoOpcional("");
-    setErrors({});
-  }, [isEdit]);
-
-  function validate(): boolean {
-    const next: FieldErrors = {};
-
-    if (!isEdit) {
-      if (!isNonEmpty(id_empleado)) next.id_empleado = "El empleado es requerido.";
-      else if (Number.isNaN(Number(id_empleado)) || Number(id_empleado) <= 0)
-        next.id_empleado = "Debe ser un número válido.";
+    if (modo === "CREAR") {
+      if (!form.id_empleado || form.id_empleado <= 0)
+        return "Te falta seleccionar el empleado.";
+      if (!form.password.trim()) return "Te falta registrar la contraseña.";
     }
 
-    if (!isNonEmpty(id_rol)) next.id_rol = "El rol es requerido.";
-    else if (Number.isNaN(Number(id_rol)) || Number(id_rol) <= 0)
-      next.id_rol = "Debe ser un número válido.";
-
-    if (!isNonEmpty(username)) next.username = "El usuario es requerido.";
-    else if (username.trim().length < 3) next.username = "Mínimo 3 caracteres.";
-    else if (username.trim().length > 50) next.username = "Máximo 50 caracteres.";
-
-    if (!isEdit) {
-      if (!isNonEmpty(password)) next.password = "La contraseña es requerida.";
-      else if (password.length < 6) next.password = "Mínimo 6 caracteres.";
-      else if (password.length > 120) next.password = "Máximo 120 caracteres.";
-    }
-
-    if (!isNonEmpty(nombre_en_ticket)) next.nombre_en_ticket = "El nombre en ticket es requerido.";
-    else if (nombre_en_ticket.trim().length < 3) next.nombre_en_ticket = "Mínimo 3 caracteres.";
-    else if (nombre_en_ticket.trim().length > 80) next.nombre_en_ticket = "Máximo 80 caracteres.";
-
-    if (telefono_opcional.trim().length > 0 && telefono_opcional.trim().length > 30) {
-      next.telefono_opcional = "Máximo 30 caracteres.";
-    }
-
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    return "";
   }
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (saving) return;
-
-    const ok = validate();
-    if (!ok) return;
+  async function guardar() {
+    const err = validarCrearEditar();
+    if (err) {
+      setMsgError(err);
+      return;
+    }
 
     try {
       setSaving(true);
-      setErrors({});
+      setMsgError("");
 
-      if (!isEdit) {
+      if (modo === "CREAR") {
         const payload: UserCreate = {
-          id_empleado: Number(id_empleado),
-          id_rol: Number(id_rol),
-          username: username.trim(),
-          password,
-          nombre_en_ticket: nombre_en_ticket.trim(),
-          telefono_opcional: telefono_opcional.trim() ? telefono_opcional.trim() : null,
+          id_empleado: form.id_empleado,
+          id_rol: form.id_rol,
+          username: form.username.trim(),
+          password: form.password,
+          nombre_en_ticket: form.nombre_en_ticket.trim(),
+          telefono_opcional: form.telefono_opcional?.trim() || null,
         };
 
         await usuariosService.crear(payload);
@@ -136,157 +130,297 @@ export default function UsuariosForm({
         return;
       }
 
-      if (!user?.id_usuario) {
-        setErrors({ general: "No se pudo identificar el usuario a editar." });
+      // EDITAR
+      if (!initialUser) {
+        setMsgError("No se encontró el usuario a editar.");
         return;
       }
 
       const payload: UserUpdate = {
-        id_rol: Number(id_rol),
-        username: username.trim(),
-        nombre_en_ticket: nombre_en_ticket.trim(),
-        telefono_opcional: telefono_opcional.trim() ? telefono_opcional.trim() : null,
+        id_rol: form.id_rol,
+        username: form.username.trim(),
+        nombre_en_ticket: form.nombre_en_ticket.trim(),
+        telefono_opcional: form.telefono_opcional?.trim() || null,
       };
 
-      await usuariosService.actualizar(user.id_usuario, payload);
+      await usuariosService.actualizar(initialUser.id_usuario, payload);
       onSuccess();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Ocurrió un error al guardar.";
-      setErrors({ general: msg });
+    } catch (e: unknown) {
+      const msg =
+        e instanceof Error ? e.message : "Ocurrió un error al guardar.";
+      setMsgError(msg);
     } finally {
       setSaving(false);
     }
   }
 
+  async function guardarPassword() {
+    if (!initialUser) return;
+
+    if (!newPassword.trim()) {
+      setMsgPass("Te falta registrar la nueva contraseña.");
+      return;
+    }
+    if (!confirmPassword.trim()) {
+      setMsgPass("Te falta confirmar la contraseña.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setMsgPass("Las contraseñas no coinciden.");
+      return;
+    }
+
+    try {
+      setChangingPass(true);
+      setMsgPass("");
+
+      const resp = await usuariosService.cambiarPassword(
+        initialUser.id_usuario,
+        {
+          new_password: newPassword,
+        },
+      );
+
+      setMsgPass(resp || "Contraseña actualizada.");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (e: unknown) {
+      const msg =
+        e instanceof Error ? e.message : "No se pudo cambiar la contraseña.";
+      setMsgPass(msg);
+    } finally {
+      setChangingPass(false);
+    }
+  }
+
   return (
-    <form onSubmit={onSubmit} className="px-4 py-4">
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-violet-900">{title}</h3>
-        <p className="mt-1 text-sm text-violet-700">
-          {isEdit
-            ? "Modifica los datos del usuario y guarda los cambios."
-            : "Registra un usuario nuevo asignando empleado, rol y credenciales."}
-        </p>
-      </div>
+    <div className="space-y-4">
+      <div className="text-sm font-extrabold text-black/70">{subtitulo}</div>
 
-      {errors.general && (
-        <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
-          {errors.general}
+      {msgError ? (
+        <div className="rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+          {msgError}
         </div>
-      )}
+      ) : null}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {!isEdit && (
-          <div>
-            <label className="text-xs font-medium text-violet-700">ID Empleado</label>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {/* Empleado (en CREAR y EDITAR se muestra; en VER solo lectura) */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-extrabold">Empleado</label>
+
+          {readOnly ? (
             <input
-              value={id_empleado}
-              onChange={(e) => setIdEmpleado(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm text-violet-900 placeholder:text-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300"
-              placeholder="Ej: 1"
+              value={
+                form.empleado_nombre ||
+                (form.id_empleado > 0 ? `Empleado #${form.id_empleado}` : "")
+              }
+              disabled
+              className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold opacity-90"
             />
-            {errors.id_empleado && <p className="mt-1 text-xs text-rose-700">{errors.id_empleado}</p>}
-          </div>
-        )}
-
-        <div>
-          <label className="text-xs font-medium text-violet-700">Rol (id)</label>
-
-          {roleOptions && roleOptions.length > 0 ? (
-            <select
-              value={id_rol}
-              onChange={(e) => setIdRol(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-300"
-            >
-              <option value="">Selecciona un rol</option>
-              {roleOptions.map((id) => (
-                <option key={id} value={String(id)}>
-                  {id}
-                </option>
-              ))}
-            </select>
           ) : (
-            <input
-              value={id_rol}
-              onChange={(e) => setIdRol(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm text-violet-900 placeholder:text-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300"
-              placeholder="Ej: 1"
+            <EmpleadoAutocomplete
+              valueId={form.id_empleado}
+              valueLabel={form.empleado_nombre}
+              onPick={(emp) =>
+                setForm((p) => ({
+                  ...p,
+                  id_empleado: emp.id_empleado,
+                  empleado_nombre: emp.nombre,
+                }))
+              }
             />
           )}
-
-          {errors.id_rol && <p className="mt-1 text-xs text-rose-700">{errors.id_rol}</p>}
         </div>
 
-        <div>
-          <label className="text-xs font-medium text-violet-700">Usuario</label>
+        {/* Rol */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-extrabold">Rol</label>
+          <select
+            value={String(form.id_rol)}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, id_rol: Number(e.target.value) }))
+            }
+            disabled={readOnly}
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold disabled:opacity-90"
+          >
+            {ROLES.map((r) => (
+              <option key={r.id} value={String(r.id)}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Usuario */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-extrabold">Usuario</label>
           <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm text-violet-900 placeholder:text-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300"
-            placeholder="Ej: yael_admin"
+            value={form.username}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, username: e.target.value }))
+            }
+            disabled={readOnly}
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold disabled:opacity-90"
           />
-          {errors.username && <p className="mt-1 text-xs text-rose-700">{errors.username}</p>}
         </div>
 
-        {!isEdit && (
-          <div>
-            <label className="text-xs font-medium text-violet-700">Contraseña</label>
+        {/* Nombre en ticket */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-extrabold">Nombre en ticket</label>
+          <input
+            value={form.nombre_en_ticket}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, nombre_en_ticket: e.target.value }))
+            }
+            disabled={readOnly}
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold disabled:opacity-90"
+          />
+        </div>
+
+        {/* Teléfono */}
+        <div className="flex flex-col gap-1 md:col-span-2">
+          <label className="text-xs font-extrabold">Teléfono (opcional)</label>
+          <input
+            value={form.telefono_opcional}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, telefono_opcional: e.target.value }))
+            }
+            disabled={readOnly}
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold disabled:opacity-90"
+          />
+        </div>
+
+        {/* Contraseña solo en CREAR */}
+        {modo === "CREAR" ? (
+          <div className="flex flex-col gap-1 md:col-span-2">
+            <label className="text-xs font-extrabold">Contraseña</label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm text-violet-900 placeholder:text-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300"
-              placeholder="Mínimo 6 caracteres"
+              value={form.password}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, password: e.target.value }))
+              }
+              className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold"
             />
-            {errors.password && <p className="mt-1 text-xs text-rose-700">{errors.password}</p>}
           </div>
-        )}
-
-        <div className="md:col-span-2">
-          <label className="text-xs font-medium text-violet-700">Nombre en ticket</label>
-          <input
-            value={nombre_en_ticket}
-            onChange={(e) => setNombreEnTicket(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm text-violet-900 placeholder:text-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300"
-            placeholder="Ej: Yael (Administrador)"
-          />
-          {errors.nombre_en_ticket && (
-            <p className="mt-1 text-xs text-rose-700">{errors.nombre_en_ticket}</p>
-          )}
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="text-xs font-medium text-violet-700">Teléfono (opcional)</label>
-          <input
-            value={telefono_opcional}
-            onChange={(e) => setTelefonoOpcional(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-violet-200 bg-white px-3 py-2 text-sm text-violet-900 placeholder:text-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300"
-            placeholder="Ej: 4771234567"
-          />
-          {errors.telefono_opcional && (
-            <p className="mt-1 text-xs text-rose-700">{errors.telefono_opcional}</p>
-          )}
-        </div>
+        ) : null}
       </div>
 
-      <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={saving}
-          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-        >
-          Cancelar
-        </button>
+      {/* Footer: en VER no hay botones */}
+      {modo !== "VER" ? (
+        <div className="flex justify-end gap-2 pt-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-xl border border-black/10 bg-white px-4 py-2 text-sm font-extrabold text-black/70 hover:bg-black/5"
+          >
+            Cancelar
+          </button>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50"
-        >
-          {saving ? "Guardando..." : "Guardar"}
-        </button>
-      </div>
-    </form>
+          <button
+            type="button"
+            onClick={() => void guardar()}
+            disabled={saving}
+            className={[
+              "rounded-xl px-4 py-2 text-sm font-extrabold text-white shadow-sm transition disabled:opacity-50",
+              modo === "CREAR"
+                ? "bg-[#34f334] text-[#0b2b0b] hover:bg-[#2fe72f]"
+                : "bg-[#34f334] text-[#0b2b0b] hover:bg-[#2fe72f]",
+            ].join(" ")}
+          >
+            {saving
+              ? "Guardando..."
+              : modo === "CREAR"
+                ? "Crear"
+                : "Actualizar"}
+          </button>
+        </div>
+      ) : null}
+
+      {/* Cambiar contraseña SOLO en EDITAR */}
+      {modo === "EDITAR" && initialUser ? (
+        <div className="mt-6 rounded-2xl border border-black/10 bg-black/5 p-4">
+          <div className="text-sm font-extrabold text-black/70">
+            Cambiar contraseña
+          </div>
+
+          {msgPass ? (
+            <div className="mt-2 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700">
+              {msgPass}
+            </div>
+          ) : null}
+
+          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3 md:items-end">
+            <div className="flex flex-col gap-1 md:col-span-1">
+              <label className="text-xs font-extrabold">Nueva contraseña</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Nueva contraseña"
+                className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 md:col-span-1">
+              <label className="text-xs font-extrabold">
+                Confirmar contraseña
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirmar contraseña"
+                className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm font-semibold"
+              />
+            </div>
+
+            <div className="md:col-span-1">
+              <button
+                type="button"
+                onClick={() => void guardarPassword()}
+                disabled={changingPass}
+                className="w-full rounded-xl bg-[#34f334] px-4 py-2 text-sm font-extrabold text-[#0b2b0b] hover:bg-[#2fe72f] disabled:opacity-50"
+              >
+                {changingPass ? "Guardando..." : "Guardar password"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Visualización extra (info completa) */}
+      {modo === "VER" && initialUser ? (
+        <div className="mt-4 rounded-2xl border border-black/10 bg-white p-4">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="text-xs font-extrabold text-black/50">
+              ID Usuario
+            </div>
+            <div className="text-sm font-semibold text-black/80">
+              {initialUser.id_usuario}
+            </div>
+
+            <div className="text-xs font-extrabold text-black/50">Estatus</div>
+            <div className="text-sm font-semibold text-black/80">
+              {initialUser.estatus}
+            </div>
+
+            <div className="text-xs font-extrabold text-black/50">
+              Fecha alta
+            </div>
+            <div className="text-sm font-semibold text-black/80">
+              {initialUser.fecha_alta ?? "-"}
+            </div>
+
+            <div className="text-xs font-extrabold text-black/50">
+              Último acceso
+            </div>
+            <div className="text-sm font-semibold text-black/80">
+              {initialUser.ultimo_acceso ?? "-"}
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }

@@ -5,4 +5,13 @@ html, body, #root {
   height: 100%;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&display=swap");
+/* Oculta scrollbar pero permite scroll */
+.scrollbar-none {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge viejo */
+}
+.scrollbar-none::-webkit-scrollbar {
+  width: 0px;                   /* Chrome/Safari */
+  height: 0px;
+}
+
