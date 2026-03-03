@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   empleadosService,
   type EmpleadoOption,
-} from "../../../empleados/services/empleados.service";
+} from "../../../usuarios/services/empleados.service";
 
 type Props = {
   valueId: number;

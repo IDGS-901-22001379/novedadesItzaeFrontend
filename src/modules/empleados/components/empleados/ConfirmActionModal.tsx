@@ -1,4 +1,4 @@
-// src/modules/usuarios/components/usuarios/ConfirmActionModal.tsx
+// src/modules/empleados/components/empleados/ConfirmActionModal.tsx
 // Modal chico de confirmación para acciones.
 // Responsabilidades: mostrar un mensaje tipo alerta y confirmar o cancelar una acción.
 
