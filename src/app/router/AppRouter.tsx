@@ -15,7 +15,9 @@ import InventarioPage from "../../modules/inventario/pages/inventario/Inventario
 import LoginPage from "../../modules/auth/pages/auth/LoginPage";
 
 import UsuariosList from "../../modules/usuarios/pages/usuarios/UsuariosList";
-import EmpleadosList from "../../modules/empleados/pages/empleados/EmpleadosList"; // ✅ NUEVO
+import EmpleadosList from "../../modules/empleados/pages/empleados/EmpleadosList";
+
+import ClientesList from "../../modules/clientes/pages/clientes/ClientesList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -50,14 +52,19 @@ export default function AppRouter() {
               {/* Usuarios (ruta real) */}
               <Route path="/admin/usuarios" element={<UsuariosList />} />
 
-              {/* ✅ Empleados (ruta real) */}
+              {/* Empleados (ruta real) */}
               <Route path="/admin/empleados" element={<EmpleadosList />} />
 
-              {/* Placeholders (para navegación sin errores) */}
+              {/* Clientes comerciales (ruta real) */}
+              <Route path="/admin/clientes" element={<ClientesList />} />
+
+              {/* Clientes fiscales (por ahora placeholder) */}
               <Route
-                path="/admin/clientes"
-                element={<EnConstruccion titulo="Clientes" />}
+                path="/admin/clientes-fiscales"
+                element={<EnConstruccion titulo="Clientes fiscales" />}
               />
+
+              {/* Placeholders (para navegación sin errores) */}
               <Route
                 path="/admin/productos"
                 element={<EnConstruccion titulo="Productos" />}
