@@ -17,7 +17,6 @@ import {
   BadgeDollarSign,
   BarChart3,
   FileText,
-  ClipboardList,
   Settings,
   ShieldCheck,
   ScrollText,
@@ -33,7 +32,7 @@ export const NAV_ADMIN: NavItem[] = [
   { label: "Usuarios", path: "/admin/usuarios", icon: UserCog },
   { label: "Empleados", path: "/admin/empleados", icon: Users },
 
-  { label: "Catálogos base", path: "/admin/catalogos", icon: ClipboardList },
+ 
 
   {
     label: "Clientes",

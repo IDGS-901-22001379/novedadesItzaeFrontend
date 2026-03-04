@@ -18,6 +18,7 @@ import UsuariosList from "../../modules/usuarios/pages/usuarios/UsuariosList";
 import EmpleadosList from "../../modules/empleados/pages/empleados/EmpleadosList";
 
 import ClientesList from "../../modules/clientes/pages/clientes/ClientesList";
+import ClientesFiscalesList from "../../modules/clientes_fiscales/pages/clientes/ClientesFiscalesList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -58,10 +59,10 @@ export default function AppRouter() {
               {/* Clientes comerciales (ruta real) */}
               <Route path="/admin/clientes" element={<ClientesList />} />
 
-              {/* Clientes fiscales (por ahora placeholder) */}
+              {/* Clientes fiscales (ruta real) */}
               <Route
                 path="/admin/clientes-fiscales"
-                element={<EnConstruccion titulo="Clientes fiscales" />}
+                element={<ClientesFiscalesList />}
               />
 
               {/* Placeholders (para navegación sin errores) */}
