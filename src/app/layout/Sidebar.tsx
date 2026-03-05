@@ -234,7 +234,7 @@ export default function Sidebar() {
     <aside
       className={[
         "h-screen sticky top-0 border-r flex flex-col",
-        collapsed ? "w-[92px]" : "w-[300px]",
+        collapsed ? "w-23" : "w-75",
         "transition-all duration-200",
         ui.shell,
       ].join(" ")}
@@ -422,7 +422,7 @@ export default function Sidebar() {
                     {collapsed && open && (
                       <div
                         className={[
-                          "absolute left-full top-0 ml-2 w-[240px] rounded-2xl border shadow-lg p-2 z-50",
+                          "absolute left-full top-0 ml-2 w-60 rounded-2xl border shadow-lg p-2 z-50",
                           ui.isDark
                             ? "bg-[#0f1115] border-white/10"
                             : "bg-white border-slate-200",

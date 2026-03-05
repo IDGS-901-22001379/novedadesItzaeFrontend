@@ -32,8 +32,6 @@ export const NAV_ADMIN: NavItem[] = [
   { label: "Usuarios", path: "/admin/usuarios", icon: UserCog },
   { label: "Empleados", path: "/admin/empleados", icon: Users },
 
- 
-
   {
     label: "Clientes",
     path: "/admin/clientes",
@@ -41,6 +39,7 @@ export const NAV_ADMIN: NavItem[] = [
     children: [
       { label: "Clientes comerciales", path: "/admin/clientes", icon: Users },
       { label: "Clientes fiscales", path: "/admin/clientes-fiscales", icon: FileText },
+      { label: "Clientes tipos", path: "/admin/clientes-tipos", icon: Settings },
     ],
   },
 
