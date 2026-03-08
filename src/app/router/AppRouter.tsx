@@ -21,6 +21,8 @@ import ClientesList from "../../modules/clientes/pages/clientes/ClientesList";
 import ClientesFiscalesList from "../../modules/clientes_fiscales/pages/clientes/ClientesFiscalesList";
 import Clientes_tiposList from "../../modules/Clientes_tipos/pages/clientes_tipos/Clientes_tiposList";
 
+import ProductosList from "../../modules/productos/pages/productos/ProductosList";
+
 import HomeRedirect from "./HomeRedirect";
 
 export default function AppRouter() {
@@ -72,11 +74,10 @@ export default function AppRouter() {
                 element={<Clientes_tiposList />}
               />
 
+              {/*  Productos  */}
+              <Route path="/admin/productos" element={<ProductosList />} />
+
               {/* Placeholders (para navegación sin errores) */}
-              <Route
-                path="/admin/productos"
-                element={<EnConstruccion titulo="Productos" />}
-              />
               <Route
                 path="/admin/compras"
                 element={<EnConstruccion titulo="Compras" />}
