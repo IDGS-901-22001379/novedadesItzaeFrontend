@@ -1,7 +1,7 @@
 // src/modules/productos/components/productos/form/ProductosBasicFields.tsx
 // Campos generales del producto (SKU, nombre, modelo, descripción, código barras).
 
-import type { ProductosFormState } from "../../../pages/productos/ProductosForm";
+import type { ProductosFormState } from "../../../pages/productos/form/productosForm.types";
 
 type Props = {
   readOnly: boolean;

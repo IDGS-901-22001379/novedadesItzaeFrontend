@@ -8,7 +8,7 @@ export function useProductosListView(items: ProductoLite[], pageSize = 10) {
     q: "",
     estatus: "TODOS",
     idCategoria: "TODOS",
-    idMarca: "TODOS",
+    idProveedor: "TODOS",
     idSucursal: "TODAS",
   });
 
@@ -44,17 +44,11 @@ export function useProductosListView(items: ProductoLite[], pageSize = 10) {
       return p.id_categoria === Number(filters.idCategoria);
     };
 
-    const filtrarMarca = (p: ProductoLite) => {
-      if (filters.idMarca === "TODOS") return true;
-      return p.id_marca === Number(filters.idMarca);
-    };
-
     return items.filter(
       (p) =>
         filtrarTexto(p) &&
         filtrarEstatus(p) &&
-        filtrarCategoria(p) &&
-        filtrarMarca(p),
+        filtrarCategoria(p),
     );
   }, [items, filters]);
 

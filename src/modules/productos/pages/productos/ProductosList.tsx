@@ -1,13 +1,5 @@
 // src/modules/productos/pages/productos/ProductosList.tsx
-// Vista principal del módulo Productos (REFAC).
-// Responsabilidades (ahora delegadas en hooks/componentes):
-// - Data (productos + catálogos + sucursales): useProductosListData
-// - Vista (filtros + paginación + resumen): useProductosListView
-// - Enriquecimiento (imagen/modelo/minimo por página): useProductosPageEnrichment
-// - Stock por sucursal (resumen): useProductosSucursalStock
-// - Acciones (nuevo/editar/ver/precios/estatus): useProductosListActions
-// - Modales (nuevo/editar/ver/precios/confirm): ProductosModals
-
+import { useEffect } from "react";
 import { useProductosTheme } from "../../theme/useProductosTheme";
 
 import ProductosHeader from "../../components/productos/ProductosHeader";
@@ -15,6 +7,8 @@ import ProductosFilters from "../../components/productos/ProductosFilters";
 import ProductosTable from "../../components/productos/ProductosTable";
 import ProductosPagination from "../../components/productos/ProductosPagination";
 import ProductosAlert from "../../components/productos/ProductosAlert";
+
+import { proveedoresService } from "../../services/proveedores.service";
 
 import { useProductosListData } from "./list/useProductosListData";
 import { useProductosListView } from "./list/useProductosListView";
@@ -26,19 +20,18 @@ import ProductosModals from "./list/ProductosModals";
 export default function ProductosList() {
   const theme = useProductosTheme();
 
-  // 1) DATA
   const {
+    allItems,
     items,
     setItems,
     categorias,
-    marcas,
+    proveedores,
     sucursales,
     state,
     errorMsg,
     cargar,
   } = useProductosListData();
 
-  // 2) VIEW
   const {
     filters,
     updateFilters,
@@ -52,20 +45,53 @@ export default function ProductosList() {
     resumen,
   } = useProductosListView(items, 10);
 
-  // 3) ENRICH: ahora también trae stock_minimo_tienda
   useProductosPageEnrichment(itemsPagina, setItems);
 
-  // 4) STOCK (resumen por página)
   const stockByProductoId = useProductosSucursalStock(
     itemsPagina,
     filters,
     sucursales,
   );
 
-  // 5) ACTIONS
   const actions = useProductosListActions({
     recargar: () => void cargar(),
   });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function aplicarFiltroProveedor() {
+      if (filters.idProveedor === "TODOS") {
+        setItems(allItems);
+        return;
+      }
+
+      try {
+        const relaciones = await proveedoresService.listarProductos(
+          Number(filters.idProveedor),
+          true,
+        );
+
+        if (cancelled) return;
+
+        const ids = new Set(
+          relaciones.filter((r) => r.activo).map((r) => r.id_producto),
+        );
+
+        const filtrados = allItems.filter((p) => ids.has(p.id_producto));
+        setItems(filtrados);
+      } catch {
+        if (cancelled) return;
+        setItems([]);
+      }
+    }
+
+    void aplicarFiltroProveedor();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filters.idProveedor, allItems, setItems]);
 
   return (
     <div className="p-4">
@@ -91,7 +117,7 @@ export default function ProductosList() {
             theme={theme}
             filters={filters}
             categoriasDisponibles={categorias}
-            marcasDisponibles={marcas}
+            proveedoresDisponibles={proveedores}
             sucursalesDisponibles={sucursales}
             onChange={updateFilters}
           />
@@ -104,7 +130,6 @@ export default function ProductosList() {
         </div>
       </div>
 
-      {/* TABLA */}
       <div className="mt-4">
         <ProductosTable
           theme={theme}
@@ -131,7 +156,6 @@ export default function ProductosList() {
         />
       </div>
 
-      {/* MODALES */}
       <ProductosModals
         theme={theme}
         openNuevo={actions.openNuevo}

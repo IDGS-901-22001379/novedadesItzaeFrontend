@@ -8,7 +8,7 @@ import type {
   UnidadMedida,
   ProductoEstatus,
 } from "../../../types/productos.types";
-import type { ProductosFormState } from "../../../pages/productos/ProductosForm";
+import type { ProductosFormState } from "../../../pages/productos/form/productosForm.types";
 
 type Props = {
   readOnly: boolean;

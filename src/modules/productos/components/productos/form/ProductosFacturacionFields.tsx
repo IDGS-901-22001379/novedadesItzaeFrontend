@@ -4,7 +4,7 @@
 // - Si facturable = false -> campos se muestran pero NO obligan y quedan deshabilitados.
 // - Si facturable = true  -> campos se habilitan (y el form valida que se llenen).
 
-import type { ProductosFormState } from "../../../pages/productos/ProductosForm";
+import type { ProductosFormState } from "../../../pages/productos/form/productosForm.types";
 
 type Props = {
   readOnly: boolean;

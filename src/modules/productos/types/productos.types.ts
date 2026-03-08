@@ -26,6 +26,7 @@ export type ProductoLite = {
   estatus: ProductoEstatus;
   id_categoria: number;
   id_marca: number;
+  id_proveedor: number;
 
   // Campos útiles para UI / filtros / tabla
   imagen_ruta?: string | null;

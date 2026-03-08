@@ -6,7 +6,7 @@
 //
 // Ajustes de UI:
 // - La Búsqueda va sola en una fila (a lo ancho).
-// - Abajo van selects compactos (Sucursal/Estatus/Categoría/Marca).
+// - Abajo van selects compactos (Sucursal/Estatus/Categoría/Proveedor).
 // - Sucursal: POR DEFECTO debe ser "TODAS" (ya no existe "Principal").
 // - La búsqueda visual debe indicar que también puede buscar por modelo.
 
@@ -19,7 +19,7 @@ export type ProductosFiltersState = {
 
   // Se manejan como string para que el <select> sea simple ("TODOS" | "1" | "2"...)
   idCategoria: "TODOS" | string;
-  idMarca: "TODOS" | string;
+  idProveedor: "TODOS" | string;
 
   // Sucursal:
   // - "TODAS": suma existencias de todas las sucursales activas
@@ -28,7 +28,7 @@ export type ProductosFiltersState = {
 };
 
 export type CategoriaOption = { id_categoria: number; nombre: string };
-export type MarcaOption = { id_marca: number; nombre: string };
+export type ProveedorOption = { id_proveedor: number; nombre: string };
 export type SucursalOption = {
   id_sucursal: number;
   nombre: string;
@@ -40,7 +40,7 @@ type Props = {
   filters: ProductosFiltersState;
 
   categoriasDisponibles: CategoriaOption[];
-  marcasDisponibles: MarcaOption[];
+  proveedoresDisponibles: ProveedorOption[];
   sucursalesDisponibles: SucursalOption[];
 
   onChange: (patch: Partial<ProductosFiltersState>) => void;
@@ -50,7 +50,7 @@ export default function ProductosFilters({
   theme,
   filters,
   categoriasDisponibles,
-  marcasDisponibles,
+  proveedoresDisponibles,
   sucursalesDisponibles,
   onChange,
 }: Props) {
@@ -90,7 +90,7 @@ export default function ProductosFilters({
           >
             <option value="TODAS">Todas</option>
 
-            {sucursalesDisponibles
+            {(sucursalesDisponibles ?? [])
               .filter((s) => s.activo)
               .map((s) => (
                 <option key={s.id_sucursal} value={String(s.id_sucursal)}>
@@ -137,7 +137,7 @@ export default function ProductosFilters({
             ].join(" ")}
           >
             <option value="TODOS">Todas</option>
-            {categoriasDisponibles.map((c) => (
+            {(categoriasDisponibles ?? []).map((c) => (
               <option key={c.id_categoria} value={String(c.id_categoria)}>
                 {c.nombre}
               </option>
@@ -145,12 +145,12 @@ export default function ProductosFilters({
           </select>
         </div>
 
-        {/* Marca */}
+        {/* Proveedor */}
         <div className="flex flex-col gap-1">
-          <label className="text-xs font-extrabold">Marca</label>
+          <label className="text-xs font-extrabold">Proveedor</label>
           <select
-            value={filters.idMarca}
-            onChange={(e) => onChange({ idMarca: e.target.value })}
+            value={filters.idProveedor}
+            onChange={(e) => onChange({ idProveedor: e.target.value })}
             className={[
               "rounded-xl border bg-white px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2",
               theme.inputBorder,
@@ -158,10 +158,10 @@ export default function ProductosFilters({
               theme.inputText,
             ].join(" ")}
           >
-            <option value="TODOS">Todas</option>
-            {marcasDisponibles.map((m) => (
-              <option key={m.id_marca} value={String(m.id_marca)}>
-                {m.nombre}
+            <option value="TODOS">Todos</option>
+            {(proveedoresDisponibles ?? []).map((p) => (
+              <option key={p.id_proveedor} value={String(p.id_proveedor)}>
+                {p.nombre}
               </option>
             ))}
           </select>
