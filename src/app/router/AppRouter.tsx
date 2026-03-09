@@ -22,6 +22,8 @@ import ClientesFiscalesList from "../../modules/clientes_fiscales/pages/clientes
 import Clientes_tiposList from "../../modules/Clientes_tipos/pages/clientes_tipos/Clientes_tiposList";
 
 import ProductosList from "../../modules/productos/pages/productos/ProductosList";
+import ProveedoresList from "../../modules/proveedores/pages/proveedores/ProveedoresList";
+import Proveedores_productosList from "../../modules/proveedores_productos/pages/proveedores_productos/Proveedores_productosList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -74,8 +76,17 @@ export default function AppRouter() {
                 element={<Clientes_tiposList />}
               />
 
-              {/*  Productos  */}
+              {/* Productos (ruta real) */}
               <Route path="/admin/productos" element={<ProductosList />} />
+
+              {/* Proveedores (ruta real) */}
+              <Route path="/admin/proveedores" element={<ProveedoresList />} />
+
+              {/* Proveedores - Productos (ruta real) */}
+              <Route
+                path="/admin/proveedores-productos"
+                element={<Proveedores_productosList />}
+              />
 
               {/* Placeholders (para navegación sin errores) */}
               <Route

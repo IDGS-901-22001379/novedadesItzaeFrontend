@@ -20,11 +20,13 @@ import {
   Settings,
   ShieldCheck,
   ScrollText,
+  Link2,
 } from "lucide-react";
 
 /*
   NAV_ADMIN define el menú para el rol Admin.
-  "Clientes" se convierte en un submenú con comerciales y fiscales.
+  "Clientes" se convierte en un submenú con comerciales, fiscales y tipos.
+  "Proveedores" se convierte en submenú con catálogo y relación proveedor-producto.
 */
 export const NAV_ADMIN: NavItem[] = [
   { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
@@ -43,7 +45,20 @@ export const NAV_ADMIN: NavItem[] = [
     ],
   },
 
-  { label: "Proveedores", path: "/admin/proveedores", icon: Truck },
+  {
+    label: "Proveedores",
+    path: "/admin/proveedores",
+    icon: Truck,
+    children: [
+      { label: "Proveedores", path: "/admin/proveedores", icon: Truck },
+      {
+        label: "Proveedor - Productos",
+        path: "/admin/proveedores-productos",
+        icon: Link2,
+      },
+    ],
+  },
+
   { label: "Productos", path: "/admin/productos", icon: Package },
 
   { label: "Inventario", path: "/admin/inventario", icon: Boxes },

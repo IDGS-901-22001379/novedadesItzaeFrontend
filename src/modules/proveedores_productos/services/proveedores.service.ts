@@ -1,17 +1,23 @@
-// src/modules/proveedores/services/proveedores.service.ts
+// src/modules/proveedores_productos/services/proveedores.service.ts
+// Service auxiliar de Proveedores para el módulo Proveedor-Productos.
+// Responsabilidades:
+// - Listado admin de proveedores
+// - Búsqueda de proveedores para selects/autocomplete
+// - Obtener detalle por id si se requiere
 
 import { httpClient } from "../../../services/http/httpClient";
 import type {
   Proveedor,
-  ProveedorCreate,
-  ProveedorUpdate,
   ProveedorListItem,
-  ProveedorEstatusUpdate,
-  ProveedoresListQuery,
   ProveedoresBuscarQuery,
-} from "../types/proveedores.types";
+  ProveedoresListQuery,
+} from "../types/proveedores_productos.types";
 
-// Convierte filtros de listado a querystring
+/* -------------------------------------------------------------------------- */
+/* Helpers: querystring                                                       */
+/* -------------------------------------------------------------------------- */
+
+// GET /proveedores
 function buildListQuery(params?: ProveedoresListQuery): string {
   if (!params) return "";
   const sp = new URLSearchParams();
@@ -24,7 +30,7 @@ function buildListQuery(params?: ProveedoresListQuery): string {
   return qs ? `?${qs}` : "";
 }
 
-// Convierte filtros de búsqueda a querystring
+// GET /proveedores/buscar
 function buildBuscarQuery(params: ProveedoresBuscarQuery): string {
   const sp = new URLSearchParams();
 
@@ -44,7 +50,11 @@ function buildBuscarQuery(params: ProveedoresBuscarQuery): string {
   return qs ? `?${qs}` : "";
 }
 
-export const proveedoresService = {
+/* -------------------------------------------------------------------------- */
+/* Service                                                                    */
+/* -------------------------------------------------------------------------- */
+
+export const proveedoresPPService = {
   // GET /proveedores
   async listar(params?: ProveedoresListQuery): Promise<ProveedorListItem[]> {
     const qs = buildListQuery(params);
@@ -62,30 +72,6 @@ export const proveedoresService = {
   // GET /proveedores/{id_proveedor}
   async obtener(id_proveedor: number): Promise<Proveedor> {
     const { data } = await httpClient.get<Proveedor>(`/proveedores/${id_proveedor}`);
-    return data;
-  },
-
-  // POST /proveedores
-  async crear(payload: ProveedorCreate): Promise<Proveedor> {
-    const { data } = await httpClient.post<Proveedor>(`/proveedores`, payload);
-    return data;
-  },
-
-  // PUT /proveedores/{id_proveedor}
-  async actualizar(id_proveedor: number, payload: ProveedorUpdate): Promise<Proveedor> {
-    const { data } = await httpClient.put<Proveedor>(`/proveedores/${id_proveedor}`, payload);
-    return data;
-  },
-
-  // PATCH /proveedores/{id_proveedor}/estatus
-  async cambiarEstatus(
-    id_proveedor: number,
-    payload: ProveedorEstatusUpdate,
-  ): Promise<Proveedor> {
-    const { data } = await httpClient.patch<Proveedor>(
-      `/proveedores/${id_proveedor}/estatus`,
-      payload,
-    );
     return data;
   },
 };
