@@ -26,6 +26,7 @@ import ProveedoresList from "../../modules/proveedores/pages/proveedores/Proveed
 import Proveedores_productosList from "../../modules/proveedores_productos/pages/proveedores_productos/Proveedores_productosList";
 
 import Inventario_sucursalesList from "../../modules/inventario_sucursales/pages/inventario_sucursales/Inventario_sucursalesList";
+import InventarioUbicacionesList from "../../modules/inventario_ubicaciones/pages/inventario_ubicaciones/InventarioUbicacionesList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -96,6 +97,12 @@ export default function AppRouter() {
                 element={<Inventario_sucursalesList />}
               />
 
+              {/* Inventario - Ubicaciones (ruta real) */}
+              <Route
+                path="/admin/inventario/ubicaciones"
+                element={<InventarioUbicacionesList />}
+              />
+
               {/* Placeholders (para navegación sin errores) */}
               <Route
                 path="/admin/compras"
@@ -141,10 +148,6 @@ export default function AppRouter() {
               />
 
               {/* Placeholders inventario hijos */}
-              <Route
-                path="/admin/inventario/ubicaciones"
-                element={<EnConstruccion titulo="Inventario - Ubicaciones" />}
-              />
               <Route
                 path="/admin/inventario/existencias"
                 element={<EnConstruccion titulo="Inventario - Existencias" />}
