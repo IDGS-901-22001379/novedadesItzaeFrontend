@@ -11,7 +11,7 @@ import EnConstruccion from "../../shared/components/EnConstruccion";
 
 import DashboardPage from "../../modules/dashboard/pages/dashboard/DashboardPage";
 import VentasPage from "../../modules/ventas/pages/ventas/VentasPage";
-import InventarioPage from "../../modules/inventario/pages/inventario/InventarioPage";
+
 import LoginPage from "../../modules/auth/pages/auth/LoginPage";
 
 import UsuariosList from "../../modules/usuarios/pages/usuarios/UsuariosList";
@@ -27,6 +27,7 @@ import Proveedores_productosList from "../../modules/proveedores_productos/pages
 
 import Inventario_sucursalesList from "../../modules/inventario_sucursales/pages/inventario_sucursales/Inventario_sucursalesList";
 import InventarioUbicacionesList from "../../modules/inventario_ubicaciones/pages/inventario_ubicaciones/InventarioUbicacionesList";
+import InventarioExistenciasList from "../../modules/inventario_existencias/pages/inventario_existencias/InventarioExistenciasList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -51,59 +52,76 @@ export default function AppRouter() {
               element={<Navigate to="/admin/dashboard" replace />}
             />
 
+            {/* Ruta base almacen */}
+            <Route
+              path="/almacen"
+              element={<Navigate to="/almacen/compras" replace />}
+            />
+
+            {/* Ruta base inventario almacen */}
+            <Route
+              path="/almacen/inventario"
+              element={<Navigate to="/almacen/inventario/sucursales" replace />}
+            />
+
             {/* ADMIN (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["ADMIN"]} />}>
-              {/* Reales (por ahora) */}
+              {/* Reales */}
               <Route path="/admin/dashboard" element={<DashboardPage />} />
               <Route path="/admin/ventas" element={<VentasPage />} />
-              <Route path="/admin/inventario" element={<InventarioPage />} />
 
-              {/* Usuarios (ruta real) */}
+              {/* Usuarios */}
               <Route path="/admin/usuarios" element={<UsuariosList />} />
 
-              {/* Empleados (ruta real) */}
+              {/* Empleados */}
               <Route path="/admin/empleados" element={<EmpleadosList />} />
 
-              {/* Clientes comerciales (ruta real) */}
+              {/* Clientes comerciales */}
               <Route path="/admin/clientes" element={<ClientesList />} />
 
-              {/* Clientes fiscales (ruta real) */}
+              {/* Clientes fiscales */}
               <Route
                 path="/admin/clientes-fiscales"
                 element={<ClientesFiscalesList />}
               />
 
-              {/* Clientes tipos (ruta real) */}
+              {/* Clientes tipos */}
               <Route
                 path="/admin/clientes-tipos"
                 element={<Clientes_tiposList />}
               />
 
-              {/* Productos (ruta real) */}
+              {/* Productos */}
               <Route path="/admin/productos" element={<ProductosList />} />
 
-              {/* Proveedores (ruta real) */}
+              {/* Proveedores */}
               <Route path="/admin/proveedores" element={<ProveedoresList />} />
 
-              {/* Proveedores - Productos (ruta real) */}
+              {/* Proveedores - Productos */}
               <Route
                 path="/admin/proveedores-productos"
                 element={<Proveedores_productosList />}
               />
 
-              {/* Inventario - Sucursales (ruta real) */}
+              {/* Inventario - Sucursales */}
               <Route
                 path="/admin/inventario/sucursales"
                 element={<Inventario_sucursalesList />}
               />
 
-              {/* Inventario - Ubicaciones (ruta real) */}
+              {/* Inventario - Ubicaciones */}
               <Route
                 path="/admin/inventario/ubicaciones"
                 element={<InventarioUbicacionesList />}
               />
 
-              {/* Placeholders (para navegación sin errores) */}
+              {/* Inventario - Existencias */}
+              <Route
+                path="/admin/inventario/existencias"
+                element={<InventarioExistenciasList />}
+              />
+
+              {/* Placeholders */}
               <Route
                 path="/admin/compras"
                 element={<EnConstruccion titulo="Compras" />}
@@ -146,12 +164,6 @@ export default function AppRouter() {
                 path="/admin/creditos"
                 element={<EnConstruccion titulo="Créditos / Cobranza" />}
               />
-
-              {/* Placeholders inventario hijos */}
-              <Route
-                path="/admin/inventario/existencias"
-                element={<EnConstruccion titulo="Inventario - Existencias" />}
-              />
             </Route>
 
             {/* VENTAS (rutas reales + placeholders) */}
@@ -169,7 +181,21 @@ export default function AppRouter() {
 
             {/* ALMACEN (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["ALMACEN"]} />}>
-              <Route path="/almacen/*" element={<InventarioPage />} />
+              {/* Inventario */}
+              <Route
+                path="/almacen/inventario/sucursales"
+                element={<Inventario_sucursalesList />}
+              />
+              <Route
+                path="/almacen/inventario/ubicaciones"
+                element={<InventarioUbicacionesList />}
+              />
+              <Route
+                path="/almacen/inventario/existencias"
+                element={<InventarioExistenciasList />}
+              />
+
+              {/* Placeholders */}
               <Route
                 path="/almacen/compras"
                 element={<EnConstruccion titulo="Compras (Almacén)" />}

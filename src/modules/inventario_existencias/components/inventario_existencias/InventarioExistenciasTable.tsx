@@ -1,42 +1,32 @@
-// src/modules/productos/components/productos/ProductosTable.tsx
-// Ajustes UI solicitados:
-// - Nombre del producto: máximo 40 caracteres + "..." (sin romper tabla).
-// - Tooltip con nombre completo (title).
-// - Imagen expandida: se muestra en un "preview flotante" (overlay) para NO agrandar la fila.
-// - La celda del producto usa truncado real (truncate) y ancho máximo controlado.
-// - En pantallas pequeñas, el nombre sigue truncado y no empuja acciones.
-// - Cambio solicitado:
+// src/modules/inventario_existencias/components/inventario_existencias/InventarioExistenciasTable.tsx
+// Tabla del listado de Inventario Existencias.
+// Ajustes UI:
+// - Sin columna ID.
+// - Primero imagen del producto.
+// - Nombre del producto al frente y debajo su modelo.
+// - Luego código de barras.
+// - Luego sucursal y debajo ubicación.
+// - Luego existencias con semáforo.
+// - Sin columna Estado.
+// - Con botones Ver y Ajustar desde InventarioExistenciasRowActions.
+// - La sucursal muestra: NombreSucursal · TIENDA/BODEGA
 
 import { useState } from "react";
 
-import type { ProductoLite } from "../../types/productos.types";
-import type { ProductosTheme } from "../../theme/productosTheme";
+import type { ExistenciaItem } from "../../types/inventarioExistencias.types";
+import type { InventarioExistenciasTheme } from "../../theme/inventarioExistenciasTheme";
 
-import ProductoEstatusBadge from "./ProductoEstatusBadge";
-import ProductosRowActions from "./ProductosRowActions";
+import InventarioExistenciasRowActions from "./InventarioExistenciasRowActions";
 
-const DEFAULT_IMAGE_URL = "/public/producto.png";
-
+const DEFAULT_IMAGE_URL = "/producto.png";
 const ASSETS_BASE_URL = "http://127.0.0.1:8000";
 
-type ProductoRow = ProductoLite & {
-  modelo?: string | null;
-  imagen_ruta?: string | null;
-  stock_minimo_tienda?: number | string | null;
-};
-
 type Props = {
-  theme: ProductosTheme;
-  items: ProductoLite[];
-
-  onVer: (p: ProductoLite) => void;
-  onEditar: (p: ProductoLite) => void;
-  onEliminar: (p: ProductoLite) => void;
-
-  onPrecios: (p: ProductoLite) => void;
-
-  // stock real (número) desde resumen
-  getStockValue?: (p: ProductoLite) => number | null;
+  theme: InventarioExistenciasTheme;
+  items: ExistenciaItem[];
+  loading?: boolean;
+  onVer: (item: ExistenciaItem) => void;
+  onEditar: (item: ExistenciaItem) => void;
 };
 
 function isHttpUrl(v: string) {
@@ -60,65 +50,101 @@ function normalizeImgSrc(raw: string): string {
   return ASSETS_BASE_URL ? `${ASSETS_BASE_URL}/${s}` : s;
 }
 
-function asIntOrNull(v: unknown): number | null {
-  if (v === null || v === undefined) return null;
-  const n = Number(v);
-  if (!Number.isFinite(n)) return null;
-  return Math.trunc(n);
-}
-
-function getStockStyles(stock: number | null, min: number | null) {
-  if (stock === null) {
-    return {
-      pill: "border-black/10 bg-white text-black/60",
-      dot: "bg-black/30",
-      title: "Sin datos de stock (selecciona sucursal o carga existencias).",
-    };
-  }
-
-  if (stock === 0) {
-    return {
-      pill: "border-red-200 bg-red-50 text-red-800",
-      dot: "bg-red-500",
-      title: "Sin existencia (0).",
-    };
-  }
-
-  const minSafe = min ?? 0;
-
-  if (stock <= minSafe) {
-    return {
-      pill: "border-yellow-200 bg-yellow-50 text-yellow-900",
-      dot: "bg-yellow-400",
-      title: `Bajo / en mínimo (mínimo: ${minSafe}).`,
-    };
-  }
-
-  return {
-    pill: "border-green-200 bg-green-50 text-green-800",
-    dot: "bg-green-500",
-    title: `OK (mínimo: ${minSafe}).`,
-  };
-}
-
-// Limita a N caracteres con "..."
 function ellipsisChars(text: string, max = 40) {
   const t = (text ?? "").trim();
   if (t.length <= max) return t;
   return `${t.slice(0, max)}…`;
 }
 
-export default function ProductosTable({
+function getExistenciaStyles(existencia: number | null) {
+  if (existencia === null) {
+    return {
+      pill: "border-black/10 bg-white text-black/60",
+      dot: "bg-black/30",
+      title: "Sin datos de existencia.",
+    };
+  }
+
+  if (existencia <= 0) {
+    return {
+      pill: "border-yellow-200 bg-yellow-50 text-yellow-900",
+      dot: "bg-yellow-400",
+      title: "Sin existencia en esta sucursal / ubicación.",
+    };
+  }
+
+  return {
+    pill: "border-green-200 bg-green-50 text-green-800",
+    dot: "bg-green-500",
+    title: "Existencia disponible.",
+  };
+}
+
+function getProductoNombre(item: ExistenciaItem) {
+  return item.producto?.nombre ?? item.producto_nombre ?? "Producto sin nombre";
+}
+
+function getProductoModelo(item: ExistenciaItem) {
+  return item.producto?.modelo ?? item.producto_modelo ?? null;
+}
+
+function getProductoCodigoBarras(item: ExistenciaItem) {
+  return item.producto?.codigo_barras ?? item.producto_codigo_barras ?? null;
+}
+
+function getProductoImagen(item: ExistenciaItem) {
+  const row = item as ExistenciaItem & {
+    imagen_ruta?: string | null;
+    producto_imagen_ruta?: string | null;
+    producto?: { imagen_ruta?: string | null; imagen_url?: string | null };
+  };
+
+  return (
+    row.producto?.imagen_ruta ??
+    row.producto?.imagen_url ??
+    row.producto_imagen_ruta ??
+    item.producto_imagen_url ??
+    row.imagen_ruta ??
+    null
+  );
+}
+
+function getSucursalNombre(item: ExistenciaItem) {
+  return (
+    item.ubicacion?.sucursal_nombre ??
+    item.sucursal_nombre ??
+    "Sucursal no disponible"
+  );
+}
+
+function getUbicacionNombre(item: ExistenciaItem) {
+  return (
+    item.ubicacion?.nombre ?? item.ubicacion_nombre ?? "Ubicación no disponible"
+  );
+}
+
+function getUbicacionTipo(item: ExistenciaItem) {
+  const tipo = item.ubicacion?.tipo ?? item.ubicacion_tipo ?? "";
+  return tipo ? String(tipo).toUpperCase() : "";
+}
+
+function buildRowKey(item: ExistenciaItem) {
+  if (item.id_existencia != null && item.id_existencia > 0) {
+    return `existencia-${item.id_existencia}`;
+  }
+
+  return `virtual-${item.id_producto}-${item.id_ubicacion}`;
+}
+
+export default function InventarioExistenciasTable({
   theme,
   items,
+  loading = false,
   onVer,
   onEditar,
-  onEliminar,
-  onPrecios,
-  getStockValue,
 }: Props) {
   const [previewImg, setPreviewImg] = useState<{
-    id_producto: number;
+    id_existencia: number | null;
     src: string;
     nombre: string;
   } | null>(null);
@@ -131,44 +157,52 @@ export default function ProductosTable({
             <thead className={`${theme.headerBg} ${theme.headerText}`}>
               <tr className="text-xs font-extrabold">
                 <th className="px-4 py-3">Producto</th>
-                <th className="px-4 py-3">SKU</th>
                 <th className="px-4 py-3">Código de barras</th>
-                <th className="px-4 py-3">Stock</th>
-                <th className="px-4 py-3">Estatus</th>
+                <th className="px-4 py-3">Sucursal / ubicación</th>
+                <th className="px-4 py-3">Existencias</th>
                 <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-black/5 text-slate-900">
-              {items.map((p) => {
-                const row: ProductoRow = p;
-
-                const stockValue = getStockValue?.(row) ?? null;
-                const minFromRow = asIntOrNull(row.stock_minimo_tienda);
-                const stockUI = stockValue === null ? "-" : String(stockValue);
-                const stockStyles = getStockStyles(stockValue, minFromRow ?? 0);
-
-                const imgSrc = row.imagen_ruta?.trim()
-                  ? normalizeImgSrc(String(row.imagen_ruta))
-                  : DEFAULT_IMAGE_URL;
-
-                const nombreFull = row.nombre ?? "";
+              {items.map((item) => {
+                const nombreFull = getProductoNombre(item);
                 const nombreShort = ellipsisChars(nombreFull, 40);
+
+                const modelo = getProductoModelo(item);
+                const codigoBarras = getProductoCodigoBarras(item);
+
+                const sucursalNombre = getSucursalNombre(item);
+                const ubicacionNombre = getUbicacionNombre(item);
+                const ubicacionTipo = getUbicacionTipo(item);
+
+                const existenciaValue =
+                  item.existencia === null || item.existencia === undefined
+                    ? null
+                    : Number(item.existencia);
+
+                const existenciaUI =
+                  existenciaValue === null ? "-" : String(existenciaValue);
+
+                const existenciaStyles = getExistenciaStyles(existenciaValue);
+
+                const imgRaw = getProductoImagen(item);
+                const imgSrc = imgRaw?.trim()
+                  ? normalizeImgSrc(String(imgRaw))
+                  : DEFAULT_IMAGE_URL;
 
                 return (
                   <tr
-                    key={row.id_producto}
+                    key={buildRowKey(item)}
                     className={`bg-white ${theme.rowHover}`}
                   >
-                    {/* Producto */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {/* Imagen pequeña */}
                         <button
                           type="button"
                           onClick={() =>
                             setPreviewImg({
-                              id_producto: row.id_producto,
+                              id_existencia: item.id_existencia ?? null,
                               src: imgSrc,
                               nombre: nombreFull,
                             })
@@ -183,7 +217,7 @@ export default function ProductosTable({
                         >
                           <img
                             src={imgSrc}
-                            alt={row.nombre}
+                            alt={nombreFull}
                             onError={(e) => {
                               const img = e.currentTarget;
                               if (img.src !== DEFAULT_IMAGE_URL) {
@@ -194,7 +228,6 @@ export default function ProductosTable({
                           />
                         </button>
 
-                        {/* Nombre + Modelo */}
                         <div className="min-w-0">
                           <div
                             className={[
@@ -210,75 +243,75 @@ export default function ProductosTable({
                           <div className="text-xs font-semibold text-slate-500">
                             Modelo:{" "}
                             <span className="font-extrabold">
-                              {row.modelo ? String(row.modelo) : "-"}
+                              {modelo ? String(modelo) : "-"}
                             </span>
                           </div>
+
+                          {item.es_existencia_real === false ? (
+                            <div className="mt-1 text-[11px] font-bold text-amber-700">
+                              Registro virtual con existencia 0
+                            </div>
+                          ) : null}
                         </div>
                       </div>
                     </td>
 
-                    {/* SKU */}
                     <td className="px-4 py-3 font-semibold">
-                      {row.sku ? row.sku : "-"}
+                      {codigoBarras ? codigoBarras : "-"}
                     </td>
 
-                    {/* Código barras */}
-                    <td className="px-4 py-3 font-semibold">
-                      {row.codigo_barras ? row.codigo_barras : "-"}
+                    <td className="px-4 py-3">
+                      <div className="min-w-0">
+                        <div
+                          className="max-w-65 truncate font-extrabold"
+                          title={
+                            ubicacionTipo
+                              ? `${sucursalNombre} · ${ubicacionTipo}`
+                              : sucursalNombre
+                          }
+                        >
+                          {ubicacionTipo
+                            ? `${sucursalNombre} · ${ubicacionTipo}`
+                            : sucursalNombre}
+                        </div>
+
+                        <div
+                          className="max-w-65 truncate text-xs font-semibold text-slate-500"
+                          title={ubicacionNombre}
+                        >
+                          Ubicación:{" "}
+                          <span className="font-extrabold">
+                            {ubicacionNombre}
+                          </span>
+                        </div>
+                      </div>
                     </td>
 
-                    {/* Stock */}
                     <td className="px-4 py-3">
                       <span
                         className={[
                           "inline-flex items-center gap-2 rounded-full border px-3 py-1",
                           "text-base font-extrabold",
-                          stockStyles.pill,
+                          existenciaStyles.pill,
                         ].join(" ")}
-                        title={stockStyles.title}
+                        title={existenciaStyles.title}
                       >
                         <span
                           className={[
                             "h-2.5 w-2.5 rounded-full",
-                            stockStyles.dot,
+                            existenciaStyles.dot,
                           ].join(" ")}
                         />
-                        {stockUI}
+                        {existenciaUI}
                       </span>
                     </td>
 
-                    {/* Estatus */}
                     <td className="px-4 py-3">
-                      <ProductoEstatusBadge
-                        theme={theme}
-                        estatus={row.estatus}
+                      <InventarioExistenciasRowActions
+                        item={item}
+                        onVer={onVer}
+                        onEditar={onEditar}
                       />
-                    </td>
-
-                    {/* Acciones */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          type="button"
-                          onClick={() => onPrecios(row)}
-                          className={[
-                            "inline-flex items-center justify-center",
-                            "h-9 w-9 rounded-xl border shadow-sm transition",
-                            "border-black/10 bg-[#34f334] text-[#0b2b0b] hover:bg-[#2fe72f]",
-                            "disabled:opacity-50",
-                          ].join(" ")}
-                          title="Precios"
-                        >
-                          <span className="text-base font-extrabold">$</span>
-                        </button>
-
-                        <ProductosRowActions
-                          producto={row}
-                          onVer={onVer}
-                          onEditar={onEditar}
-                          onEliminar={onEliminar}
-                        />
-                      </div>
                     </td>
                   </tr>
                 );
@@ -286,15 +319,20 @@ export default function ProductosTable({
             </tbody>
           </table>
 
-          {items.length === 0 && (
+          {!loading && items.length === 0 && (
             <div className="p-6 text-center text-sm font-semibold text-slate-600">
-              No hay productos para mostrar con los filtros actuales.
+              No hay existencias para mostrar con los filtros actuales.
+            </div>
+          )}
+
+          {loading && (
+            <div className="p-6 text-center text-sm font-semibold text-slate-600">
+              Cargando existencias...
             </div>
           )}
         </div>
       </div>
 
-      {/* Overlay de imagen */}
       {previewImg ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
