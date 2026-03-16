@@ -1,0 +1,50 @@
+// src/modules/movimientos_inventario/components/movimientos_inventario/Movimientos_inventarioModalForm.tsx
+// Modal contenedor para formularios del módulo Movimientos de Inventario.
+// Responsabilidades: abrir/cerrar modal, pintar header con el color del tema y renderizar children.
+
+import type { ReactNode } from "react";
+import type { MovimientosInventarioTheme } from "../../theme/movimientosInventarioTheme";
+
+type Props = {
+  open: boolean;
+  title: string;
+  theme: MovimientosInventarioTheme;
+  onClose: () => void;
+  children: ReactNode;
+};
+
+export default function Movimientos_inventarioModalForm({
+  open,
+  title,
+  theme,
+  onClose,
+  children,
+}: Props) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
+        <div
+          className={`flex items-center justify-between px-5 py-4 ${theme.headerBg} ${theme.headerText}`}
+        >
+          <div className="text-lg font-extrabold">{title}</div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg px-3 py-2 text-base font-extrabold text-red-200 hover:bg-white/10 hover:text-red-100"
+            aria-label="Cerrar"
+            title="Cerrar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-5">{children}</div>
+      </div>
+    </div>
+  );
+}

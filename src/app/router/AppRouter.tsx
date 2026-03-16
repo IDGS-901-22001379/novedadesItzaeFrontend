@@ -1,5 +1,3 @@
-// src/app/router/AppRouter.tsx
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import RequireAuth from "../guards/RequireAuth";
@@ -28,6 +26,8 @@ import Proveedores_productosList from "../../modules/proveedores_productos/pages
 import Inventario_sucursalesList from "../../modules/inventario_sucursales/pages/inventario_sucursales/Inventario_sucursalesList";
 import InventarioUbicacionesList from "../../modules/inventario_ubicaciones/pages/inventario_ubicaciones/InventarioUbicacionesList";
 import InventarioExistenciasList from "../../modules/inventario_existencias/pages/inventario_existencias/InventarioExistenciasList";
+import Movimientos_inventarioList from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioList";
+import Movimientos_inventarioDetail from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioDetail";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -121,6 +121,18 @@ export default function AppRouter() {
                 element={<InventarioExistenciasList />}
               />
 
+              {/* Inventario - Movimientos */}
+              <Route
+                path="/admin/inventario/movimientos"
+                element={<Movimientos_inventarioList />}
+              />
+
+              {/* Inventario - Movimientos Detail */}
+              <Route
+                path="/admin/inventario/movimientos/:id_movimiento"
+                element={<Movimientos_inventarioDetail />}
+              />
+
               {/* Placeholders */}
               <Route
                 path="/admin/compras"
@@ -193,6 +205,14 @@ export default function AppRouter() {
               <Route
                 path="/almacen/inventario/existencias"
                 element={<InventarioExistenciasList />}
+              />
+              <Route
+                path="/almacen/inventario/movimientos"
+                element={<Movimientos_inventarioList />}
+              />
+              <Route
+                path="/almacen/inventario/movimientos/:id_movimiento"
+                element={<Movimientos_inventarioDetail />}
               />
 
               {/* Placeholders */}

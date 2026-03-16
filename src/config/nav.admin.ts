@@ -1,5 +1,3 @@
-// src/config/nav.admin.ts
-
 import type { NavItem } from "./nav.types";
 import {
   LayoutDashboard,
@@ -19,18 +17,18 @@ import {
   FileText,
   Settings,
   ShieldCheck,
-  ScrollText,
   Link2,
   Building2,
   MapPinned,
   Archive,
+  ScrollText,
 } from "lucide-react";
 
 /*
   NAV_ADMIN define el menú para el rol Admin.
   "Clientes" se convierte en un submenú con comerciales, fiscales y tipos.
   "Proveedores" se convierte en submenú con catálogo y relación proveedor-producto.
-  "Inventario" se convierte en submenú con sucursales, ubicaciones y existencias.
+  "Inventario" se convierte en submenú con sucursales, ubicaciones, existencias y movimientos.
 */
 export const NAV_ADMIN: NavItem[] = [
   { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
@@ -44,8 +42,16 @@ export const NAV_ADMIN: NavItem[] = [
     icon: UserRound,
     children: [
       { label: "Clientes comerciales", path: "/admin/clientes", icon: Users },
-      { label: "Clientes fiscales", path: "/admin/clientes-fiscales", icon: FileText },
-      { label: "Clientes tipos", path: "/admin/clientes-tipos", icon: Settings },
+      {
+        label: "Clientes fiscales",
+        path: "/admin/clientes-fiscales",
+        icon: FileText,
+      },
+      {
+        label: "Clientes tipos",
+        path: "/admin/clientes-tipos",
+        icon: Settings,
+      },
     ],
   },
 
@@ -85,10 +91,14 @@ export const NAV_ADMIN: NavItem[] = [
         path: "/admin/inventario/existencias",
         icon: Archive,
       },
+      {
+        label: "Movimientos",
+        path: "/admin/inventario/movimientos",
+        icon: ScrollText,
+      },
     ],
   },
 
-  { label: "Movimientos", path: "/admin/movimientos-inventario", icon: ScrollText },
   { label: "Traspasos (Bodegas)", path: "/admin/traspasos", icon: ArrowLeftRight },
 
   { label: "Compras", path: "/admin/compras", icon: ShoppingCart },
