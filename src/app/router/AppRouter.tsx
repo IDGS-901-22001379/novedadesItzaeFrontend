@@ -28,6 +28,7 @@ import InventarioUbicacionesList from "../../modules/inventario_ubicaciones/page
 import InventarioExistenciasList from "../../modules/inventario_existencias/pages/inventario_existencias/InventarioExistenciasList";
 import Movimientos_inventarioList from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioList";
 import Movimientos_inventarioDetail from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioDetail";
+import TraspasosList from "../../modules/traspasos/pages/traspasos/TraspasosList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -133,6 +134,9 @@ export default function AppRouter() {
                 element={<Movimientos_inventarioDetail />}
               />
 
+              {/* Traspasos */}
+              <Route path="/admin/traspasos" element={<TraspasosList />} />
+
               {/* Placeholders */}
               <Route
                 path="/admin/compras"
@@ -141,10 +145,6 @@ export default function AppRouter() {
               <Route
                 path="/admin/caja"
                 element={<EnConstruccion titulo="Caja" />}
-              />
-              <Route
-                path="/admin/traspasos"
-                element={<EnConstruccion titulo="Traspasos" />}
               />
               <Route
                 path="/admin/facturacion"
@@ -215,14 +215,13 @@ export default function AppRouter() {
                 element={<Movimientos_inventarioDetail />}
               />
 
+              {/* Traspasos */}
+              <Route path="/almacen/traspasos" element={<TraspasosList />} />
+
               {/* Placeholders */}
               <Route
                 path="/almacen/compras"
                 element={<EnConstruccion titulo="Compras (Almacén)" />}
-              />
-              <Route
-                path="/almacen/traspasos"
-                element={<EnConstruccion titulo="Traspasos (Almacén)" />}
               />
             </Route>
           </Route>
