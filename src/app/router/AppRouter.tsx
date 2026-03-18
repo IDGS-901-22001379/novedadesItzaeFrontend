@@ -29,6 +29,7 @@ import InventarioExistenciasList from "../../modules/inventario_existencias/page
 import Movimientos_inventarioList from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioList";
 import Movimientos_inventarioDetail from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioDetail";
 import TraspasosList from "../../modules/traspasos/pages/traspasos/TraspasosList";
+import ComprasList from "../../modules/compras/pages/compras/ComprasList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -104,6 +105,9 @@ export default function AppRouter() {
                 element={<Proveedores_productosList />}
               />
 
+              {/* Compras */}
+              <Route path="/admin/compras" element={<ComprasList />} />
+
               {/* Inventario - Sucursales */}
               <Route
                 path="/admin/inventario/sucursales"
@@ -138,10 +142,6 @@ export default function AppRouter() {
               <Route path="/admin/traspasos" element={<TraspasosList />} />
 
               {/* Placeholders */}
-              <Route
-                path="/admin/compras"
-                element={<EnConstruccion titulo="Compras" />}
-              />
               <Route
                 path="/admin/caja"
                 element={<EnConstruccion titulo="Caja" />}
@@ -193,6 +193,9 @@ export default function AppRouter() {
 
             {/* ALMACEN (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["ALMACEN"]} />}>
+              {/* Compras */}
+              <Route path="/almacen/compras" element={<ComprasList />} />
+
               {/* Inventario */}
               <Route
                 path="/almacen/inventario/sucursales"
@@ -217,12 +220,6 @@ export default function AppRouter() {
 
               {/* Traspasos */}
               <Route path="/almacen/traspasos" element={<TraspasosList />} />
-
-              {/* Placeholders */}
-              <Route
-                path="/almacen/compras"
-                element={<EnConstruccion titulo="Compras (Almacén)" />}
-              />
             </Route>
           </Route>
         </Route>
