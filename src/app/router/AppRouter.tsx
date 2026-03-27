@@ -8,8 +8,6 @@ import NoAutorizado from "../../shared/components/NoAutorizado";
 import EnConstruccion from "../../shared/components/EnConstruccion";
 
 import DashboardPage from "../../modules/dashboard/pages/dashboard/DashboardPage";
-import VentasPage from "../../modules/ventas/pages/ventas/VentasPage";
-
 import LoginPage from "../../modules/auth/pages/auth/LoginPage";
 
 import UsuariosList from "../../modules/usuarios/pages/usuarios/UsuariosList";
@@ -30,6 +28,7 @@ import Movimientos_inventarioList from "../../modules/movimientos_inventario/pag
 import Movimientos_inventarioDetail from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioDetail";
 import TraspasosList from "../../modules/traspasos/pages/traspasos/TraspasosList";
 import ComprasList from "../../modules/compras/pages/compras/ComprasList";
+import VentasList from "../../modules/ventas/pages/ventas/VentasList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -66,11 +65,17 @@ export default function AppRouter() {
               element={<Navigate to="/almacen/inventario/sucursales" replace />}
             />
 
+            {/* Ruta base ventas */}
+            <Route
+              path="/ventas"
+              element={<Navigate to="/ventas/listado" replace />}
+            />
+
             {/* ADMIN (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["ADMIN"]} />}>
               {/* Reales */}
               <Route path="/admin/dashboard" element={<DashboardPage />} />
-              <Route path="/admin/ventas" element={<VentasPage />} />
+              <Route path="/admin/ventas" element={<VentasList />} />
 
               {/* Usuarios */}
               <Route path="/admin/usuarios" element={<UsuariosList />} />
@@ -180,7 +185,7 @@ export default function AppRouter() {
 
             {/* VENTAS (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["VENTAS"]} />}>
-              <Route path="/ventas/*" element={<VentasPage />} />
+              <Route path="/ventas/listado" element={<VentasList />} />
               <Route
                 path="/ventas/caja"
                 element={<EnConstruccion titulo="Caja (Ventas)" />}
