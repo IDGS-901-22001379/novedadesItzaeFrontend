@@ -1,3 +1,8 @@
+// src/app/router/AppRouter.tsx
+// Router principal de la aplicación.
+// Responsabilidades: registrar rutas públicas, protegidas y por rol.
+// Integra los módulos reales y deja placeholders en los apartados aún no desarrollados.
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import RequireAuth from "../guards/RequireAuth";
@@ -29,6 +34,7 @@ import Movimientos_inventarioDetail from "../../modules/movimientos_inventario/p
 import TraspasosList from "../../modules/traspasos/pages/traspasos/TraspasosList";
 import ComprasList from "../../modules/compras/pages/compras/ComprasList";
 import VentasList from "../../modules/ventas/pages/ventas/VentasList";
+import CajaList from "../../modules/caja/pages/caja/CajaList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -113,6 +119,9 @@ export default function AppRouter() {
               {/* Compras */}
               <Route path="/admin/compras" element={<ComprasList />} />
 
+              {/* Caja */}
+              <Route path="/admin/caja" element={<CajaList />} />
+
               {/* Inventario - Sucursales */}
               <Route
                 path="/admin/inventario/sucursales"
@@ -147,10 +156,6 @@ export default function AppRouter() {
               <Route path="/admin/traspasos" element={<TraspasosList />} />
 
               {/* Placeholders */}
-              <Route
-                path="/admin/caja"
-                element={<EnConstruccion titulo="Caja" />}
-              />
               <Route
                 path="/admin/facturacion"
                 element={<EnConstruccion titulo="Facturación CFDI" />}
