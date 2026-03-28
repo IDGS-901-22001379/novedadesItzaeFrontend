@@ -1,3 +1,8 @@
+// src/app/router/AppRouter.tsx
+// Router principal de la aplicación.
+// Responsabilidades: registrar rutas públicas, protegidas y por rol.
+// Integra los módulos reales y deja placeholders en los apartados aún no desarrollados.
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import RequireAuth from "../guards/RequireAuth";
@@ -8,8 +13,6 @@ import NoAutorizado from "../../shared/components/NoAutorizado";
 import EnConstruccion from "../../shared/components/EnConstruccion";
 
 import DashboardPage from "../../modules/dashboard/pages/dashboard/DashboardPage";
-import VentasPage from "../../modules/ventas/pages/ventas/VentasPage";
-
 import LoginPage from "../../modules/auth/pages/auth/LoginPage";
 
 import UsuariosList from "../../modules/usuarios/pages/usuarios/UsuariosList";
@@ -30,6 +33,8 @@ import Movimientos_inventarioList from "../../modules/movimientos_inventario/pag
 import Movimientos_inventarioDetail from "../../modules/movimientos_inventario/pages/movimientos_inventario/Movimientos_inventarioDetail";
 import TraspasosList from "../../modules/traspasos/pages/traspasos/TraspasosList";
 import ComprasList from "../../modules/compras/pages/compras/ComprasList";
+import VentasList from "../../modules/ventas/pages/ventas/VentasList";
+import CajaList from "../../modules/caja/pages/caja/CajaList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -66,11 +71,17 @@ export default function AppRouter() {
               element={<Navigate to="/almacen/inventario/sucursales" replace />}
             />
 
+            {/* Ruta base ventas */}
+            <Route
+              path="/ventas"
+              element={<Navigate to="/ventas/listado" replace />}
+            />
+
             {/* ADMIN (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["ADMIN"]} />}>
               {/* Reales */}
               <Route path="/admin/dashboard" element={<DashboardPage />} />
-              <Route path="/admin/ventas" element={<VentasPage />} />
+              <Route path="/admin/ventas" element={<VentasList />} />
 
               {/* Usuarios */}
               <Route path="/admin/usuarios" element={<UsuariosList />} />
@@ -108,6 +119,9 @@ export default function AppRouter() {
               {/* Compras */}
               <Route path="/admin/compras" element={<ComprasList />} />
 
+              {/* Caja */}
+              <Route path="/admin/caja" element={<CajaList />} />
+
               {/* Inventario - Sucursales */}
               <Route
                 path="/admin/inventario/sucursales"
@@ -143,10 +157,6 @@ export default function AppRouter() {
 
               {/* Placeholders */}
               <Route
-                path="/admin/caja"
-                element={<EnConstruccion titulo="Caja" />}
-              />
-              <Route
                 path="/admin/facturacion"
                 element={<EnConstruccion titulo="Facturación CFDI" />}
               />
@@ -180,7 +190,7 @@ export default function AppRouter() {
 
             {/* VENTAS (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["VENTAS"]} />}>
-              <Route path="/ventas/*" element={<VentasPage />} />
+              <Route path="/ventas/listado" element={<VentasList />} />
               <Route
                 path="/ventas/caja"
                 element={<EnConstruccion titulo="Caja (Ventas)" />}
