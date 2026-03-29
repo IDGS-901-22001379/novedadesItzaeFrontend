@@ -1,7 +1,7 @@
 // src/app/router/AppRouter.tsx
 // Router principal de la aplicación.
-// Responsabilidades: registrar rutas públicas, protegidas y por rol.
-// Integra los módulos reales y deja placeholders en los apartados aún no desarrollados.
+// Se encarga de registrar rutas públicas, protegidas y por rol,
+// integrando los módulos reales y dejando placeholders en los apartados aún no desarrollados.
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -35,6 +35,7 @@ import TraspasosList from "../../modules/traspasos/pages/traspasos/TraspasosList
 import ComprasList from "../../modules/compras/pages/compras/ComprasList";
 import VentasList from "../../modules/ventas/pages/ventas/VentasList";
 import CajaList from "../../modules/caja/pages/caja/CajaList";
+import Cortes_cajaList from "../../modules/cortes_caja/pages/cortes_caja/Cortes_cajaList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -42,120 +43,95 @@ export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/no-autorizado" element={<NoAutorizado />} />
 
-        {/* Protected */}
         <Route element={<RequireAuth />}>
-          {/* Layout con Sidebar/Topbar */}
           <Route element={<AppShell />}>
-            {/* Root default: redirige según rol */}
             <Route path="/" element={<HomeRedirect />} />
 
-            {/* Ruta base admin */}
             <Route
               path="/admin"
               element={<Navigate to="/admin/dashboard" replace />}
             />
 
-            {/* Ruta base almacen */}
             <Route
               path="/almacen"
               element={<Navigate to="/almacen/compras" replace />}
             />
 
-            {/* Ruta base inventario almacen */}
             <Route
               path="/almacen/inventario"
               element={<Navigate to="/almacen/inventario/sucursales" replace />}
             />
 
-            {/* Ruta base ventas */}
             <Route
               path="/ventas"
               element={<Navigate to="/ventas/listado" replace />}
             />
 
-            {/* ADMIN (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["ADMIN"]} />}>
-              {/* Reales */}
               <Route path="/admin/dashboard" element={<DashboardPage />} />
               <Route path="/admin/ventas" element={<VentasList />} />
 
-              {/* Usuarios */}
               <Route path="/admin/usuarios" element={<UsuariosList />} />
 
-              {/* Empleados */}
               <Route path="/admin/empleados" element={<EmpleadosList />} />
 
-              {/* Clientes comerciales */}
               <Route path="/admin/clientes" element={<ClientesList />} />
 
-              {/* Clientes fiscales */}
               <Route
                 path="/admin/clientes-fiscales"
                 element={<ClientesFiscalesList />}
               />
 
-              {/* Clientes tipos */}
               <Route
                 path="/admin/clientes-tipos"
                 element={<Clientes_tiposList />}
               />
 
-              {/* Productos */}
               <Route path="/admin/productos" element={<ProductosList />} />
 
-              {/* Proveedores */}
               <Route path="/admin/proveedores" element={<ProveedoresList />} />
 
-              {/* Proveedores - Productos */}
               <Route
                 path="/admin/proveedores-productos"
                 element={<Proveedores_productosList />}
               />
 
-              {/* Compras */}
               <Route path="/admin/compras" element={<ComprasList />} />
 
-              {/* Caja */}
               <Route path="/admin/caja" element={<CajaList />} />
 
-              {/* Inventario - Sucursales */}
+              <Route path="/admin/cortes-caja" element={<Cortes_cajaList />} />
+
               <Route
                 path="/admin/inventario/sucursales"
                 element={<Inventario_sucursalesList />}
               />
 
-              {/* Inventario - Ubicaciones */}
               <Route
                 path="/admin/inventario/ubicaciones"
                 element={<InventarioUbicacionesList />}
               />
 
-              {/* Inventario - Existencias */}
               <Route
                 path="/admin/inventario/existencias"
                 element={<InventarioExistenciasList />}
               />
 
-              {/* Inventario - Movimientos */}
               <Route
                 path="/admin/inventario/movimientos"
                 element={<Movimientos_inventarioList />}
               />
 
-              {/* Inventario - Movimientos Detail */}
               <Route
                 path="/admin/inventario/movimientos/:id_movimiento"
                 element={<Movimientos_inventarioDetail />}
               />
 
-              {/* Traspasos */}
               <Route path="/admin/traspasos" element={<TraspasosList />} />
 
-              {/* Placeholders */}
               <Route
                 path="/admin/facturacion"
                 element={<EnConstruccion titulo="Facturación CFDI" />}
@@ -179,16 +155,11 @@ export default function AppRouter() {
                 }
               />
               <Route
-                path="/admin/cortes-caja"
-                element={<EnConstruccion titulo="Cortes de caja" />}
-              />
-              <Route
                 path="/admin/creditos"
                 element={<EnConstruccion titulo="Créditos / Cobranza" />}
               />
             </Route>
 
-            {/* VENTAS (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["VENTAS"]} />}>
               <Route path="/ventas/listado" element={<VentasList />} />
               <Route
@@ -201,12 +172,9 @@ export default function AppRouter() {
               />
             </Route>
 
-            {/* ALMACEN (rutas reales + placeholders) */}
             <Route element={<RequireRole allow={["ALMACEN"]} />}>
-              {/* Compras */}
               <Route path="/almacen/compras" element={<ComprasList />} />
 
-              {/* Inventario */}
               <Route
                 path="/almacen/inventario/sucursales"
                 element={<Inventario_sucursalesList />}
@@ -228,13 +196,11 @@ export default function AppRouter() {
                 element={<Movimientos_inventarioDetail />}
               />
 
-              {/* Traspasos */}
               <Route path="/almacen/traspasos" element={<TraspasosList />} />
             </Route>
           </Route>
         </Route>
 
-        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
