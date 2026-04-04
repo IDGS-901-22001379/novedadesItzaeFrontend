@@ -36,6 +36,7 @@ import ComprasList from "../../modules/compras/pages/compras/ComprasList";
 import VentasList from "../../modules/ventas/pages/ventas/VentasList";
 import CajaList from "../../modules/caja/pages/caja/CajaList";
 import Cortes_cajaList from "../../modules/cortes_caja/pages/cortes_caja/Cortes_cajaList";
+import FacturacionCfdiList from "../../modules/facturacion_cfdi/pages/facturacion_cfdi/Facturacion_cfdiList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -134,8 +135,9 @@ export default function AppRouter() {
 
               <Route
                 path="/admin/facturacion"
-                element={<EnConstruccion titulo="Facturación CFDI" />}
+                element={<FacturacionCfdiList />}
               />
+
               <Route
                 path="/admin/catalogos"
                 element={<EnConstruccion titulo="Catálogos base" />}
