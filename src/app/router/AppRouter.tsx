@@ -37,6 +37,7 @@ import VentasList from "../../modules/ventas/pages/ventas/VentasList";
 import CajaList from "../../modules/caja/pages/caja/CajaList";
 import Cortes_cajaList from "../../modules/cortes_caja/pages/cortes_caja/Cortes_cajaList";
 import FacturacionCfdiList from "../../modules/facturacion_cfdi/pages/facturacion_cfdi/Facturacion_cfdiList";
+import Devoluciones_cancelacionesList from "../../modules/devoluciones_cancelaciones/pages/devoluciones_cancelaciones/Devoluciones_cancelacionesList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -139,6 +140,11 @@ export default function AppRouter() {
               />
 
               <Route
+                path="/admin/devoluciones"
+                element={<Devoluciones_cancelacionesList />}
+              />
+
+              <Route
                 path="/admin/catalogos"
                 element={<EnConstruccion titulo="Catálogos base" />}
               />
@@ -149,12 +155,6 @@ export default function AppRouter() {
               <Route
                 path="/admin/reportes-inventario"
                 element={<EnConstruccion titulo="Reportes de inventario" />}
-              />
-              <Route
-                path="/admin/devoluciones"
-                element={
-                  <EnConstruccion titulo="Devoluciones / Cancelaciones" />
-                }
               />
               <Route
                 path="/admin/creditos"
@@ -170,7 +170,7 @@ export default function AppRouter() {
               />
               <Route
                 path="/ventas/devoluciones"
-                element={<EnConstruccion titulo="Devoluciones (Ventas)" />}
+                element={<Devoluciones_cancelacionesList />}
               />
             </Route>
 
