@@ -29,6 +29,7 @@ import {
   "Clientes" se convierte en un submenú con comerciales, fiscales y tipos.
   "Proveedores" se convierte en submenú con catálogo y relación proveedor-producto.
   "Inventario" se convierte en submenú con sucursales, ubicaciones, existencias y movimientos.
+  "Créditos y cobranza" se convierte en submenú con créditos y abonos.
 */
 export const NAV_ADMIN: NavItem[] = [
   { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
@@ -99,22 +100,50 @@ export const NAV_ADMIN: NavItem[] = [
     ],
   },
 
-  { label: "Traspasos (Bodegas)", path: "/admin/traspasos", icon: ArrowLeftRight },
+  {
+    label: "Traspasos (Bodegas)",
+    path: "/admin/traspasos",
+    icon: ArrowLeftRight,
+  },
 
   { label: "Compras", path: "/admin/compras", icon: ShoppingCart },
   { label: "Ventas", path: "/admin/ventas", icon: Receipt },
 
   { label: "Caja", path: "/admin/caja", icon: Wallet },
-  { label: "Cortes de caja", path: "/admin/cortes-caja", icon: BadgeDollarSign },
+  {
+    label: "Cortes de caja",
+    path: "/admin/cortes-caja",
+    icon: BadgeDollarSign,
+  },
 
   { label: "Devoluciones", path: "/admin/devoluciones", icon: Undo2 },
 
-  { label: "Créditos y cobranza", path: "/admin/creditos", icon: BadgeDollarSign },
+  {
+    label: "Créditos y cobranza",
+    path: "/admin/creditos",
+    icon: BadgeDollarSign,
+    children: [
+      {
+        label: "Créditos",
+        path: "/admin/creditos",
+        icon: BadgeDollarSign,
+      },
+      {
+        label: "Abonos",
+        path: "/admin/abonos",
+        icon: Wallet,
+      },
+    ],
+  },
 
   { label: "Facturación CFDI", path: "/admin/facturacion", icon: FileText },
 
   { label: "Reportes ventas", path: "/admin/reportes-ventas", icon: BarChart3 },
-  { label: "Reportes inventario", path: "/admin/reportes-inventario", icon: BarChart3 },
+  {
+    label: "Reportes inventario",
+    path: "/admin/reportes-inventario",
+    icon: BarChart3,
+  },
 
   { label: "Auditoría / Bitácora", path: "/admin/auditoria", icon: ShieldCheck },
   { label: "Configuración", path: "/admin/configuracion", icon: Settings },
