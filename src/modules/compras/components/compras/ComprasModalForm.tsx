@@ -46,8 +46,20 @@ export default function ComprasModalForm({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="max-h-[80vh] overflow-y-auto p-5">{children}</div>
+        {/* Body con scroll interno y colores forzados */}
+        <div
+          className={[
+            "max-h-[80vh] overflow-y-auto bg-white p-5 text-slate-900",
+            "[&_label]:text-slate-900",
+            "[&_input]:text-slate-900",
+            "[&_select]:text-slate-900",
+            "[&_textarea]:text-slate-900",
+            "[&_input::placeholder]:text-slate-400",
+            "[&_textarea::placeholder]:text-slate-400",
+          ].join(" ")}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

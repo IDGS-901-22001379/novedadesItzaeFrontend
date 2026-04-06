@@ -1,5 +1,5 @@
-// src/modules/usuarios/components/usuarios/UsuariosAlert.tsx
-// Alertas del módulo Usuarios.
+// src/modules/creditos_abonos/components/creditos_abonos/CreditosAbonosAlert.tsx
+// Alertas del módulo Créditos Abonos.
 // Responsabilidades: mostrar mensajes de error o informativos con diseño suave.
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
   message: string;
 };
 
-export default function UsuariosAlert({ type, message }: Props) {
+export default function CreditosAbonosAlert({ type, message }: Props) {
   if (!message) return null;
 
   const base = "mt-4 rounded-2xl border px-4 py-3 text-sm font-semibold";

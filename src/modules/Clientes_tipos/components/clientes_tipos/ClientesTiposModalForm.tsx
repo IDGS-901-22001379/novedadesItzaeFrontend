@@ -31,12 +31,12 @@ export default function ClientesTiposModalForm({
         <div
           className={`flex items-center justify-between px-4 py-3 sm:px-5 sm:py-4 ${theme.headerBg} ${theme.headerText}`}
         >
-          <div className="text-base sm:text-lg font-extrabold">{title}</div>
+          <div className="text-base font-extrabold sm:text-lg">{title}</div>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-2.5 py-1.5 sm:px-3 sm:py-2 text-sm sm:text-base font-extrabold text-red-200 hover:bg-white/10 hover:text-red-100"
+            className="rounded-lg px-2.5 py-1.5 text-sm font-extrabold text-red-200 hover:bg-white/10 hover:text-red-100 sm:px-3 sm:py-2 sm:text-base"
             aria-label="Cerrar"
             title="Cerrar"
           >
@@ -44,8 +44,20 @@ export default function ClientesTiposModalForm({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-4 sm:p-5">{children}</div>
+        {/* Body forzado a colores claros/legibles */}
+        <div
+          className={[
+            "bg-white p-4 text-slate-900 sm:p-5",
+            "[&_label]:text-slate-900",
+            "[&_input]:text-slate-900",
+            "[&_select]:text-slate-900",
+            "[&_textarea]:text-slate-900",
+            "[&_input::placeholder]:text-slate-400",
+            "[&_textarea::placeholder]:text-slate-400",
+          ].join(" ")}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

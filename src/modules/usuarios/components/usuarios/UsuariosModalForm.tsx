@@ -45,8 +45,20 @@ export default function UsuariosModalForm({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-5">{children}</div>
+        {/* Body forzado a colores claros/legibles */}
+        <div
+          className={[
+            "bg-white p-5 text-slate-900",
+            "[&_label]:text-slate-900",
+            "[&_input]:text-slate-900",
+            "[&_select]:text-slate-900",
+            "[&_textarea]:text-slate-900",
+            "[&_input::placeholder]:text-slate-400",
+            "[&_textarea::placeholder]:text-slate-400",
+          ].join(" ")}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

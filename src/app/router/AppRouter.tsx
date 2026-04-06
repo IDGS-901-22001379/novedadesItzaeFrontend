@@ -39,6 +39,7 @@ import Cortes_cajaList from "../../modules/cortes_caja/pages/cortes_caja/Cortes_
 import FacturacionCfdiList from "../../modules/facturacion_cfdi/pages/facturacion_cfdi/Facturacion_cfdiList";
 import Devoluciones_cancelacionesList from "../../modules/devoluciones_cancelaciones/pages/devoluciones_cancelaciones/Devoluciones_cancelacionesList";
 import CreditosList from "../../modules/creditos/pages/creditos/CreditosList";
+import Creditos_abonosList from "../../modules/creditos_abonos/pages/creditos_abonos/Creditos_abonosList";
 
 import HomeRedirect from "./HomeRedirect";
 
@@ -147,10 +148,7 @@ export default function AppRouter() {
 
               <Route path="/admin/creditos" element={<CreditosList />} />
 
-              <Route
-                path="/admin/abonos"
-                element={<EnConstruccion titulo="Abonos" />}
-              />
+              <Route path="/admin/abonos" element={<Creditos_abonosList />} />
 
               <Route
                 path="/admin/catalogos"

@@ -47,8 +47,18 @@ export default function ProductosModalForm({
           </button>
         </div>
 
-        {/* Body con scroll interno (cuando hay muchos campos) */}
-        <div className="max-h-[85vh] overflow-y-auto p-4 sm:p-5 md:p-6">
+        {/* Body con scroll interno (cuando hay muchos campos) y colores forzados */}
+        <div
+          className={[
+            "max-h-[85vh] overflow-y-auto bg-white p-4 text-slate-900 sm:p-5 md:p-6",
+            "[&_label]:text-slate-900",
+            "[&_input]:text-slate-900",
+            "[&_select]:text-slate-900",
+            "[&_textarea]:text-slate-900",
+            "[&_input::placeholder]:text-slate-400",
+            "[&_textarea::placeholder]:text-slate-400",
+          ].join(" ")}
+        >
           {children}
         </div>
       </div>
