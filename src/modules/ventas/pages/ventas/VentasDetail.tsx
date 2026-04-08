@@ -8,9 +8,6 @@
 import { useMemo, useState } from "react";
 import type { VentaObtenerResponse } from "../../types";
 
-import VentasFormGeneral from "./form/VentasFormGeneral";
-import VentasFormFacturacion from "./form/VentasFormFacturacion";
-import VentasFormDetalles from "./form/VentasFormDetalles";
 import VentasFormPagos from "./form/VentasFormPagos";
 import VentasFormSummary from "./form/VentasFormSummary";
 import VentasFormInfo from "./form/VentasFormInfo";
@@ -29,11 +26,8 @@ type Props = {
 export default function VentasDetail({ item }: Props) {
   const [msgInfoAccion, setMsgInfoAccion] = useState("");
 
-  // Construye una versión local del estado para reutilizar los bloques visuales
-  // del formulario, pero siempre en modo solo lectura.
   const form = useMemo(() => buildInitialForm("VER", item), [item]);
 
-  // Calcula los totales del detalle para mostrarlos en el resumen.
   const subtotal = useMemo(() => {
     return form.detalles.reduce(
       (acc, d) => acc + Number(d.cantidad) * Number(d.precio_unitario),
@@ -52,14 +46,6 @@ export default function VentasDetail({ item }: Props) {
   const total = useMemo(() => {
     return form.detalles.reduce((acc, d) => acc + calcDetalleImporte(d), 0);
   }, [form.detalles]);
-
-  const montoPagado = useMemo(() => {
-    return form.pagos.reduce((acc, p) => acc + Number(p.monto), 0);
-  }, [form.pagos]);
-
-  const cambio = useMemo(() => {
-    return Math.max(0, montoPagado - total);
-  }, [montoPagado, total]);
 
   function accionPendiente(nombre: string) {
     setMsgInfoAccion(`${nombre}: aún se está trabajando en ello.`);
@@ -85,24 +71,6 @@ export default function VentasDetail({ item }: Props) {
         </div>
       ) : null}
 
-      <VentasFormGeneral
-        form={form}
-        setForm={() => {}}
-        readOnly={true}
-        onToggleFacturacion={() => {}}
-      />
-
-      <VentasFormFacturacion form={form} readOnly={true} />
-
-      <VentasFormDetalles
-        detalles={form.detalles}
-        readOnly={true}
-        onUpdateDetalle={() => {}}
-        onAgregarDetalle={() => {}}
-        onEliminarDetalle={() => {}}
-        calcDetalleImporte={calcDetalleImporte}
-      />
-
       <VentasFormPagos
         pagos={form.pagos}
         readOnly={true}
@@ -116,7 +84,6 @@ export default function VentasDetail({ item }: Props) {
         descuentoTotal={descuentoTotal}
         impuestosTotal={impuestosTotal}
         total={total}
-        cambio={cambio}
       />
 
       <VentasFormInfo venta={item} formatDate={formatDate} />

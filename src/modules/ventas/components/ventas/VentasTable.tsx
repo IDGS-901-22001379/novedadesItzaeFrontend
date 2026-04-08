@@ -101,11 +101,11 @@ export default function VentasTable({ theme, items, onVer }: Props) {
                 </td>
 
                 <td className="px-4 py-3 text-right font-medium">
-                  {formatMoney(item.monto_pagado)}
+                  {formatMoney(item.monto_pagado ?? 0)}
                 </td>
 
                 <td className="px-4 py-3 text-right font-medium">
-                  {formatMoney(item.cambio)}
+                  {formatMoney(item.cambio ?? 0)}
                 </td>
 
                 <td className="px-4 py-3">

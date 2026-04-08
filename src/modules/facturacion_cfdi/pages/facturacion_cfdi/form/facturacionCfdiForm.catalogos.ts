@@ -1,6 +1,6 @@
 // src/modules/facturacion_cfdi/pages/facturacion_cfdi/form/facturacionCfdiForm.catalogos.ts
 // Carga de catálogos del formulario de facturación CFDI.
-// Responsabilidades: obtener clientes fiscales y series activas.
+// Responsabilidades: obtener clientes fiscales, series activas y sucursales.
 
 import { facturacionCfdiClientesFiscalesService } from "../../../services/facturacion_cfdi_clientes_fiscales.service";
 import { facturacionCfdiSeriesService } from "../../../services/facturacion_cfdi_series.service";
@@ -22,5 +22,6 @@ export async function cargarCatalogosFacturacionCfdi(): Promise<FacturacionCfdiC
   return {
     clientesFiscales,
     series,
+    sucursales: [],
   };
 }

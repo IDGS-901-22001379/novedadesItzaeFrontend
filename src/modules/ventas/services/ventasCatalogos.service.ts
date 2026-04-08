@@ -17,13 +17,18 @@ export const ventasCatalogosService = {
       }>
     >(`/catalogos/formas-pago`);
 
-    return (Array.isArray(data) ? data : []).map((item) => ({
-      id_forma_pago: item.id_forma_pago,
-      clave: item.clave ?? null,
-      label: item.clave?.trim()
-        ? `${item.clave.trim()} - ${item.nombre}`
-        : item.nombre,
-    }));
+    return (Array.isArray(data) ? data : []).map((item) => {
+      const nombre = item.nombre?.trim() || "";
+      const clave = item.clave?.trim() || null;
+      const label = clave ? `${clave} - ${nombre}` : nombre;
+
+      return {
+        id_forma_pago: item.id_forma_pago,
+        clave,
+        label,
+        forma_pago_label: label,
+      };
+    });
   },
 
   // Ajusta la ruta exacta según tu backend
@@ -36,12 +41,17 @@ export const ventasCatalogosService = {
       }>
     >(`/catalogos/metodos-pago-cfdi`);
 
-    return (Array.isArray(data) ? data : []).map((item) => ({
-      id_metodo_pago_cfdi: item.id_metodo_pago_cfdi,
-      clave: item.clave ?? null,
-      label: item.clave?.trim()
-        ? `${item.clave.trim()} - ${item.nombre}`
-        : item.nombre,
-    }));
+    return (Array.isArray(data) ? data : []).map((item) => {
+      const nombre = item.nombre?.trim() || "";
+      const clave = item.clave?.trim() || null;
+      const label = clave ? `${clave} - ${nombre}` : nombre;
+
+      return {
+        id_metodo_pago_cfdi: item.id_metodo_pago_cfdi,
+        clave,
+        label,
+        metodo_cfdi_label: label,
+      };
+    });
   },
 };

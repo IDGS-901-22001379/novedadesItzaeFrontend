@@ -26,10 +26,6 @@ function getMenu(appRol: string | null): NavItem[] {
   return NAV_ADMIN;
 }
 
-/*
-  themeTokens devuelve clases Tailwind según el tema del sidebar.
-  Estas clases controlan colores, hover, activo, scrollbar y badges.
-*/
 function themeTokens(t: SidebarTheme) {
   if (t === "dark") {
     return {
@@ -171,13 +167,6 @@ function Dot({
   );
 }
 
-/*
-  Sidebar soporta dos tipos de items:
-  - Item normal: NavLink directo.
-  - Grupo con children: se muestra como desplegable tipo "Files".
-  Cuando el sidebar está colapsado y un grupo está abierto, el submenú aparece como panel flotante
-  para que siga siendo usable.
-*/
 export default function Sidebar() {
   const { user, appRol, logout } = useAuth();
   const { sidebarTheme, setSidebarTheme } = useSidebarTheme();
@@ -189,10 +178,6 @@ export default function Sidebar() {
   const location = useLocation();
   const pathname = location.pathname;
 
-  /*
-    openGroup guarda el path del grupo que el usuario abrió manualmente.
-    Si está en null, el sidebar puede abrir automáticamente el grupo según la ruta actual.
-  */
   const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   const username = user?.username ?? "";
@@ -202,12 +187,6 @@ export default function Sidebar() {
   const profileText = ui.isDark ? "text-white" : "text-slate-900";
   const footerBg = ui.isDark ? "bg-white/5" : "bg-black/5";
 
-  /*
-    Un grupo se considera activo si el usuario está en:
-    - la ruta exacta del grupo
-    - cualquier subruta /admin/clientes/...
-    - rutas relacionadas como /admin/clientes-fiscales (por el guion)
-  */
   const isGroupActive = (groupPath: string) => {
     return (
       pathname === groupPath ||
@@ -216,10 +195,6 @@ export default function Sidebar() {
     );
   };
 
-  /*
-    Si el usuario abrió manualmente un grupo, se respeta.
-    Si no abrió ninguno, el grupo se abre automáticamente cuando su ruta está activa.
-  */
   const isGroupOpen = (groupPath: string) => {
     if (openGroup === groupPath) return true;
     if (openGroup && openGroup !== groupPath) return false;
@@ -233,32 +208,33 @@ export default function Sidebar() {
   return (
     <aside
       className={[
-        "h-screen sticky top-0 border-r flex flex-col",
+        "sticky top-0 flex h-screen flex-col border-r",
         collapsed ? "w-23" : "w-75",
         "transition-all duration-200",
         ui.shell,
       ].join(" ")}
     >
       <div className="px-4 pt-4 pb-3">
-        <div className="flex items-center justify-between relative">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="relative flex items-center justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <div
               className={[
-                "h-14 w-14 rounded-full overflow-hidden ring-2 shrink-0",
+                "h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2",
                 ui.divider,
               ].join(" ")}
               title="Logo"
             >
               <img
                 src="/logo.jpeg"
-                alt="logo"
+                alt="Logo Novedades Itzae"
                 className="h-full w-full object-cover"
+                loading="eager"
               />
             </div>
 
             {!collapsed && (
               <div className="min-w-0">
-                <div className="text-sm font-extrabold tracking-wide leading-4 truncate">
+                <div className="truncate text-sm font-extrabold leading-4 tracking-wide">
                   Novedades Itzae
                 </div>
 
@@ -311,12 +287,11 @@ export default function Sidebar() {
             type="button"
             onClick={() => setCollapsed((v) => !v)}
             className={[
-              "rounded-full transition flex items-center justify-center",
+              "flex items-center justify-center rounded-full transition",
               collapsed
                 ? [
-                    "absolute left-4 top-4 h-14 w-14",
+                    "absolute top-4 left-4 z-50 h-14 w-14",
                     "bg-transparent hover:bg-transparent",
-                    "z-50",
                   ].join(" ")
                 : ["h-11 w-11", ui.hover].join(" "),
             ].join(" ")}
@@ -339,14 +314,14 @@ export default function Sidebar() {
           <Search size={16} className={ui.muted} />
           {!collapsed && (
             <input
-              className="w-full bg-transparent outline-none text-sm"
+              className="w-full bg-transparent text-sm outline-none"
               placeholder="Buscar..."
             />
           )}
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 px-3">
+      <div className="min-h-0 flex-1 px-3">
         <nav className="h-full overflow-y-auto pr-1 scrollbar-none">
           <div className="space-y-1 pb-3">
             {menu.map((item) => {
@@ -362,7 +337,7 @@ export default function Sidebar() {
                       type="button"
                       onClick={() => toggleGroup(item.path)}
                       className={[
-                        "w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition",
+                        "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition",
                         active
                           ? ["ring-2", ui.ring, ui.active].join(" ")
                           : ui.hover,
@@ -373,8 +348,8 @@ export default function Sidebar() {
                       <Icon size={18} className="shrink-0" />
 
                       {!collapsed && (
-                        <div className="flex-1 flex items-center justify-between min-w-0">
-                          <span className="font-semibold truncate">
+                        <div className="flex min-w-0 flex-1 items-center justify-between">
+                          <span className="truncate font-semibold">
                             {item.label}
                           </span>
                           <span className={ui.muted}>
@@ -389,7 +364,7 @@ export default function Sidebar() {
                     </button>
 
                     {!collapsed && open && (
-                      <div className="mt-1 ml-3 pl-3 border-l border-white/10 space-y-1">
+                      <div className="mt-1 ml-3 space-y-1 border-l border-white/10 pl-3">
                         {item.children.map((child) => {
                           const CIcon = child.icon;
 
@@ -410,7 +385,7 @@ export default function Sidebar() {
                                 size={16}
                                 className="shrink-0 opacity-90"
                               />
-                              <span className="font-semibold truncate">
+                              <span className="truncate font-semibold">
                                 {child.label}
                               </span>
                             </NavLink>
@@ -422,10 +397,10 @@ export default function Sidebar() {
                     {collapsed && open && (
                       <div
                         className={[
-                          "absolute left-full top-0 ml-2 w-60 rounded-2xl border shadow-lg p-2 z-50",
+                          "absolute top-0 left-full z-50 ml-2 w-60 rounded-2xl border p-2 shadow-lg",
                           ui.isDark
-                            ? "bg-[#0f1115] border-white/10"
-                            : "bg-white border-slate-200",
+                            ? "border-white/10 bg-[#0f1115]"
+                            : "border-slate-200 bg-white",
                         ].join(" ")}
                       >
                         <div
@@ -455,7 +430,7 @@ export default function Sidebar() {
                                 }
                               >
                                 <CIcon size={16} className="shrink-0" />
-                                <span className="font-semibold truncate">
+                                <span className="truncate font-semibold">
                                   {child.label}
                                 </span>
                               </NavLink>
@@ -485,15 +460,15 @@ export default function Sidebar() {
                 >
                   <Icon size={18} className="shrink-0" />
                   {!collapsed && (
-                    <div className="flex-1 flex items-center justify-between min-w-0">
-                      <span className="font-semibold truncate">
+                    <div className="flex min-w-0 flex-1 items-center justify-between">
+                      <span className="truncate font-semibold">
                         {item.label}
                       </span>
 
                       {typeof item.badge === "number" && item.badge > 0 && (
                         <span
                           className={[
-                            "text-[11px] px-2 py-0.5 rounded-full",
+                            "rounded-full px-2 py-0.5 text-[11px]",
                             ui.badge,
                           ].join(" ")}
                         >
@@ -511,12 +486,12 @@ export default function Sidebar() {
 
       <div className={["border-t", ui.divider].join(" ")}>
         <div
-          className={["px-4 py-3 flex items-center gap-3", footerBg].join(" ")}
+          className={["flex items-center gap-3 px-4 py-3", footerBg].join(" ")}
         >
           <NavLink
             to="/perfil"
             className={[
-              "h-10 w-10 rounded-full shrink-0 ring-2 flex items-center justify-center font-extrabold",
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full ring-2 font-extrabold",
               profileRing,
               profileText,
             ].join(" ")}
@@ -528,13 +503,13 @@ export default function Sidebar() {
           {!collapsed && (
             <NavLink
               to="/perfil"
-              className="flex-1 leading-4 min-w-0"
+              className="min-w-0 flex-1 leading-4"
               title="Perfil"
             >
-              <div className="text-sm font-semibold truncate">
+              <div className="truncate text-sm font-semibold">
                 {user?.username ?? "-"}
               </div>
-              <div className={["text-[11px] truncate", ui.muted].join(" ")}>
+              <div className={["truncate text-[11px]", ui.muted].join(" ")}>
                 {user?.rol ?? "-"}
               </div>
             </NavLink>
