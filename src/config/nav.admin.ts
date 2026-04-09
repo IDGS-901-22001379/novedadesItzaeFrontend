@@ -13,10 +13,8 @@ import {
   ArrowLeftRight,
   Undo2,
   BadgeDollarSign,
-  BarChart3,
   FileText,
   Settings,
-  ShieldCheck,
   Link2,
   Building2,
   MapPinned,
@@ -138,13 +136,5 @@ export const NAV_ADMIN: NavItem[] = [
 
   { label: "Facturación CFDI", path: "/admin/facturacion", icon: FileText },
 
-  { label: "Reportes ventas", path: "/admin/reportes-ventas", icon: BarChart3 },
-  {
-    label: "Reportes inventario",
-    path: "/admin/reportes-inventario",
-    icon: BarChart3,
-  },
-
-  { label: "Auditoría / Bitácora", path: "/admin/auditoria", icon: ShieldCheck },
-  { label: "Configuración", path: "/admin/configuracion", icon: Settings },
+  
 ];

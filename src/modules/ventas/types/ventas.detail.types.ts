@@ -4,6 +4,7 @@
 // - Definir la estructura completa de una venta.
 // - Definir sus detalles y pagos.
 // - Definir la respuesta de GET /ventas/{id_venta}.
+// - Incluir campos extendidos útiles para UI, ticket y vista detalle.
 
 import type {
   VentaEstatus,
@@ -15,6 +16,10 @@ export interface VentaDetalle {
   id_venta_detalle: number;
   id_venta: number;
   id_producto: number;
+
+  // Campo útil para UI / ticket cuando backend lo envía enriquecido.
+  producto_label?: string | null;
+
   presentacion: VentaPresentacion;
   unidades_por_caja: number;
   cantidad: number;
@@ -29,6 +34,10 @@ export interface VentaPago {
   id_venta_pago: number;
   id_venta: number;
   id_forma_pago: number;
+
+  // Campo útil para UI / ticket cuando backend lo envía enriquecido.
+  forma_pago_label?: string | null;
+
   monto: number;
   referencia: string | null;
   creado_en: string;
@@ -47,6 +56,11 @@ export interface Venta {
   id_usuario_vendedor: number;
   id_apertura: number | null;
 
+  // Labels enriquecidos para UI / ticket
+  cliente_label?: string | null;
+  vendedor_label?: string | null;
+  apertura_label?: string | null;
+
   notas: string | null;
   estatus: VentaEstatus;
 
@@ -64,6 +78,11 @@ export interface Venta {
   id_metodo_pago_cfdi: number | null;
 
   monto_pagado: number;
+
+  // Campos nuevos para ventas a crédito
+  es_credito?: boolean;
+  saldo_pendiente?: number;
+
   cambio: number;
 
   creado_en: string;

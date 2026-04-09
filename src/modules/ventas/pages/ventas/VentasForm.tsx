@@ -5,13 +5,15 @@
 // - Renderizar bloques separados de captura.
 // - Mostrar información adicional en modo visualización.
 // - Abrir el modal de cobro antes de registrar la venta.
+// - Después de confirmar el cobro, mostrar la vista previa del ticket.
 // - Integrar el flujo de caja/apertura dentro del formulario.
+
+import { useState } from "react";
 
 import type { VentasFormProps } from "./form/ventasForm.types";
 
 import { useVentasForm } from "./form/useVentasForm";
 import VentasFormGeneral from "./form/VentasFormGeneral";
-import VentasFormFacturacion from "./form/VentasFormFacturacion";
 import VentasFormDetalles from "./form/VentasFormDetalles";
 import VentasFormSummary from "./form/VentasFormSummary";
 import VentasFormInfo from "./form/VentasFormInfo";
@@ -20,10 +22,55 @@ import VentasFormToolbar from "./form/VentasFormToolbar";
 import VentasCobroModal from "./form/VentasCobroModal";
 import { VentasFormAbrirAperturaModal } from "./form/ventasFormAperturas";
 
+import {
+  buildTiketFromVentaResponse,
+  TiketPreviewModal,
+  type TiketData,
+} from "./form/tiket";
+
 export type { VentasFormModo } from "./form/ventasForm.types";
 
 export default function VentasForm(props: VentasFormProps) {
   const vm = useVentasForm(props);
+
+  const [ticketPreviewOpen, setTicketPreviewOpen] = useState(false);
+  const [ticketData, setTicketData] = useState<TiketData | null>(null);
+
+  function handleOpenTicketPreviewFromVentaActual() {
+    if (!props.initialVenta) {
+      vm.accionPendiente("No hay información de la venta para imprimir");
+      return;
+    }
+
+    const tiket = buildTiketFromVentaResponse(props.initialVenta);
+    setTicketData(tiket);
+    setTicketPreviewOpen(true);
+  }
+
+  function handleCloseTicketPreview() {
+    setTicketPreviewOpen(false);
+    setTicketData(null);
+
+    // Solo después de crear/cobrar una venta nueva
+    if (props.modo === "CREAR") {
+      props.onSuccess();
+    }
+  }
+
+  async function handleConfirmarCobro() {
+    const response = await vm.guardar();
+
+    if (!response) return;
+
+    const tiket = buildTiketFromVentaResponse({
+      venta: response.venta,
+      detalles: response.detalles,
+      pagos: response.pagos,
+    });
+
+    setTicketData(tiket);
+    setTicketPreviewOpen(true);
+  }
 
   return (
     <div className="space-y-4">
@@ -45,7 +92,6 @@ export default function VentasForm(props: VentasFormProps) {
         form={vm.form}
         setForm={vm.setForm}
         readOnly={vm.readOnly}
-        onToggleFacturacion={vm.toggleFacturacion}
         clienteQuery={vm.clienteQuery}
         setClienteQuery={vm.setClienteQuery}
         clienteResults={vm.clienteResults}
@@ -55,8 +101,6 @@ export default function VentasForm(props: VentasFormProps) {
         aperturaVm={vm.aperturaVm}
         onAbrirCaja={() => void vm.abrirCajaDesdeVentas()}
       />
-
-      <VentasFormFacturacion form={vm.form} readOnly={vm.readOnly} />
 
       <VentasFormDetalles
         detalles={vm.form.detalles}
@@ -87,7 +131,7 @@ export default function VentasForm(props: VentasFormProps) {
           />
 
           <VentasFormActions
-            onImprimir={() => vm.accionPendiente("Imprimir venta")}
+            onImprimir={handleOpenTicketPreviewFromVentaActual}
             onFacturar={() => vm.accionPendiente("Mandar a facturar")}
             onCredito={() => vm.accionPendiente("Mandar venta a crédito")}
           />
@@ -114,11 +158,20 @@ export default function VentasForm(props: VentasFormProps) {
         cambio={vm.cambio}
         formasPago={vm.formasPagoOptions}
         onClose={vm.cerrarCobro}
-        onConfirmar={() => void vm.guardar()}
-        onImprimir={() => vm.accionPendiente("Imprimir ticket")}
+        onConfirmar={() => void handleConfirmarCobro()}
+        onImprimir={() =>
+          vm.accionPendiente("Primero confirma el cobro para ver el ticket")
+        }
         onUpdatePago={vm.updatePago}
         onAgregarPago={vm.agregarPago}
         onEliminarPago={vm.eliminarPago}
+      />
+
+      <TiketPreviewModal
+        open={ticketPreviewOpen}
+        data={ticketData}
+        title="Vista previa del ticket"
+        onClose={handleCloseTicketPreview}
       />
 
       <VentasFormAbrirAperturaModal

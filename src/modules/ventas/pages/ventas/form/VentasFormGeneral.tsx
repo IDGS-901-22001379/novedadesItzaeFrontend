@@ -10,7 +10,6 @@ type Props = {
   form: VentaFormState;
   setForm: Dispatch<SetStateAction<VentaFormState>>;
   readOnly: boolean;
-  onToggleFacturacion: (checked: boolean) => void;
 
   clienteQuery: string;
   setClienteQuery: Dispatch<SetStateAction<string>>;
@@ -27,7 +26,6 @@ export default function VentasFormGeneral({
   form,
   setForm,
   readOnly,
-  onToggleFacturacion,
   clienteQuery,
   setClienteQuery,
   clienteResults,
@@ -263,22 +261,22 @@ export default function VentasFormGeneral({
           </div>
         </div>
 
-        {/* Facturación */}
+        {/* Venta a crédito */}
         <div className="flex items-end">
           <label
             className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition ${
-              form.marcada_para_facturar
-                ? "border border-green-300 bg-green-50 text-green-800"
+              form.es_credito
+                ? "border border-amber-300 bg-amber-50 text-amber-800"
                 : "border border-black/10 bg-white text-black/80"
             }`}
           >
             <input
               type="checkbox"
-              checked={form.marcada_para_facturar}
-              onChange={(e) => onToggleFacturacion(e.target.checked)}
+              checked={Boolean(form.es_credito)}
+              onChange={(e) => updateField("es_credito", e.target.checked)}
               disabled={readOnly}
             />
-            Marcar para facturar
+            Venta a crédito
           </label>
         </div>
 

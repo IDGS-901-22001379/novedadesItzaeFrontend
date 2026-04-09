@@ -27,6 +27,9 @@ export interface VentaHeaderCreate {
   id_forma_pago_principal?: number | null;
   id_metodo_pago_cfdi?: number | null;
 
+  // Nuevo campo para indicar si la venta será a crédito.
+  es_credito?: boolean;
+
   folio?: string | null;
   estatus?: VentaEstatus;
 
@@ -35,6 +38,7 @@ export interface VentaHeaderCreate {
   impuestos_total: number;
   total: number;
   monto_pagado: number;
+  saldo_pendiente: number;
   cambio: number;
 }
 

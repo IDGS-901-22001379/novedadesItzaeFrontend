@@ -72,6 +72,8 @@ export const ventasService = {
     return data;
   },
 
+  // El campo header.es_credito viaja dentro del payload
+  // y el backend decide la lógica de contado/crédito.
   async crear(payload: VentaCreate): Promise<VentaCreateResponse> {
     const { data } = await httpClient.post<VentaCreateResponse>(
       `/ventas`,

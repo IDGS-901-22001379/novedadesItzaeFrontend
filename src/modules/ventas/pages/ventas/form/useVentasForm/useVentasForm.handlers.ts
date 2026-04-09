@@ -143,6 +143,15 @@ export function createVentasFormHandlers({
     setForm((prev) => setFacturacionState(prev, checked));
   }
 
+  function toggleCredito(checked: boolean) {
+    setForm((prev) => ({
+      ...prev,
+      es_credito: checked,
+    }));
+
+    setMsgError("");
+  }
+
   function selectCliente(cliente: VentaClienteOption) {
     selectVentasCliente(cliente, setForm, setClienteQuery, setClienteResults);
   }
@@ -334,6 +343,7 @@ export function createVentasFormHandlers({
     agregarPago,
     eliminarPago,
     toggleFacturacion,
+    toggleCredito,
     selectCliente,
     clearClienteSearchResults,
     selectProducto,

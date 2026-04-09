@@ -89,22 +89,30 @@ export function buildInitialForm(
         const detalleBase: VentaDetalleForm = {
           id_producto: d.id_producto ?? null,
           producto_label:
-            d.id_producto != null ? `Producto #${d.id_producto}` : "",
+            d.producto_label?.trim() ||
+            (d.id_producto != null ? `Producto #${d.id_producto}` : ""),
           presentacion: d.presentacion,
           unidades_por_caja: d.unidades_por_caja,
           cantidad: Number(d.cantidad),
           precio_unitario: Number(d.precio_unitario),
           descuento: Number(d.descuento),
           iva_tasa: Number(d.iva_tasa ?? 0),
-          impuestos: 0,
-          importe: 0,
+          impuestos: Number(d.impuestos ?? 0),
+          importe: Number(d.importe ?? 0),
         };
 
-        const impuestos = calcDetalleImpuesto(detalleBase);
-        const importe = calcDetalleImporte({
-          ...detalleBase,
-          impuestos,
-        });
+        const impuestos =
+          Number(detalleBase.impuestos || 0) > 0
+            ? Number(detalleBase.impuestos)
+            : calcDetalleImpuesto(detalleBase);
+
+        const importe =
+          Number(detalleBase.importe || 0) > 0
+            ? Number(detalleBase.importe)
+            : calcDetalleImporte({
+                ...detalleBase,
+                impuestos,
+              });
 
         return {
           ...detalleBase,
@@ -117,25 +125,31 @@ export function buildInitialForm(
       (ventaResp.pagos ?? []).map((p) => ({
         id_forma_pago: p.id_forma_pago ?? null,
         forma_pago_label:
-          p.id_forma_pago != null ? `Forma de pago #${p.id_forma_pago}` : "",
+          p.forma_pago_label?.trim() ||
+          (p.id_forma_pago != null ? `Forma de pago #${p.id_forma_pago}` : ""),
         monto: Number(p.monto),
         referencia: p.referencia ?? "",
       })) || [];
 
     return {
       id_cliente: v.id_cliente ?? null,
-      cliente_label: v.id_cliente != null ? `Cliente #${v.id_cliente}` : "",
+      cliente_label:
+        v.cliente_label?.trim() ||
+        (v.id_cliente != null ? `Cliente #${v.id_cliente}` : ""),
       id_tipo_cliente: null,
       tipo_cliente_label: null,
 
       id_usuario_vendedor: v.id_usuario_vendedor ?? null,
       vendedor_label:
-        v.id_usuario_vendedor != null
+        v.vendedor_label?.trim() ||
+        (v.id_usuario_vendedor != null
           ? `Vendedor #${v.id_usuario_vendedor}`
-          : "",
+          : ""),
 
       id_apertura: v.id_apertura ?? null,
-      apertura_label: v.id_apertura != null ? `Apertura #${v.id_apertura}` : "",
+      apertura_label:
+        v.apertura_label?.trim() ||
+        (v.id_apertura != null ? `Apertura #${v.id_apertura}` : ""),
 
       notas: v.notas ?? "",
       fecha_hora_pos: v.fecha_hora_pos
@@ -145,8 +159,11 @@ export function buildInitialForm(
       timezone_pos: v.timezone_pos ?? VENTA_DEFAULTS.timezonePosValue,
       timezone_pos_label: VENTA_DEFAULTS.timezonePosLabel,
 
-      offset_minutos_pos: v.offset_minutos_pos ?? VENTA_DEFAULTS.offsetMinutosPos,
+      offset_minutos_pos:
+        v.offset_minutos_pos ?? VENTA_DEFAULTS.offsetMinutosPos,
       fuente_hora: v.fuente_hora ?? VENTA_DEFAULTS.fuenteHora,
+
+      es_credito: Boolean(v.es_credito),
 
       marcada_para_facturar: Boolean(v.marcada_para_facturar),
       mostrar_datos_factura: Boolean(v.marcada_para_facturar),

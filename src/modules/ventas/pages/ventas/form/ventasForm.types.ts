@@ -5,6 +5,7 @@
 // - Soportar valores por defecto del negocio.
 // - Permitir mostrar labels visibles además de ids internos.
 // - Preparar la lógica para facturación opcional.
+// - Preparar la lógica para ventas a crédito.
 // - Exponer el estado auxiliar para búsqueda/selección de cliente.
 // - Exponer el estado auxiliar para búsqueda/selección de productos.
 // - Exponer el flujo de cobro previo al registro final.
@@ -13,6 +14,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import type {
   VentaCreate,
+  VentaCreateResponse,
   VentaObtenerResponse,
   VentaPresentacion,
   VentaClienteOption,
@@ -83,6 +85,9 @@ export type VentaFormState = {
   offset_minutos_pos: number;
   fuente_hora: "SERVIDOR" | "CLIENTE";
 
+  // Crédito
+  es_credito: boolean;
+
   // Facturación
   marcada_para_facturar: boolean;
   mostrar_datos_factura: boolean;
@@ -122,8 +127,9 @@ export type VentasFormVm = {
   total: number;
   montoPagado: number;
   cambio: number;
+  saldoPendiente: number;
 
-  guardar: () => Promise<void>;
+  guardar: () => Promise<VentaCreateResponse | void>;
 
   // Flujo de cobro
   abrirCobro: () => void;
@@ -141,6 +147,9 @@ export type VentasFormVm = {
 
   // Activa o limpia la parte de facturación.
   toggleFacturacion: (checked: boolean) => void;
+
+  // Activa o desactiva la venta a crédito.
+  toggleCredito: (checked: boolean) => void;
 
   // Búsqueda/selección de cliente comercial.
   clienteQuery: string;
@@ -173,3 +182,4 @@ export type VentasFormVm = {
 };
 
 export type VentaCreatePayload = VentaCreate;
+export type { VentaCreateResponse };

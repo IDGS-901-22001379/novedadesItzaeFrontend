@@ -2,7 +2,7 @@
 // Valores por defecto del formulario de ventas.
 // Responsabilidades:
 // - Construir el estado inicial de una venta nueva.
-// - Aplicar reglas de negocio para cliente, vendedor, apertura y facturación.
+// - Aplicar reglas de negocio para cliente, vendedor, apertura, crédito y facturación.
 // - Dejar listo el formulario para captura rápida.
 
 import type { VentaFormState } from "./ventasForm.types";
@@ -60,6 +60,9 @@ export function buildVentaNuevaDefaultState(
 
     offset_minutos_pos: VENTA_DEFAULTS.offsetMinutosPos,
     fuente_hora: VENTA_DEFAULTS.fuenteHora,
+
+    // Crédito apagado por defecto
+    es_credito: false,
 
     // Facturación apagada por defecto
     marcada_para_facturar: VENTA_FACTURA_DEFAULTS.marcadaParaFacturar,

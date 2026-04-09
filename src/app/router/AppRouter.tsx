@@ -154,13 +154,10 @@ export default function AppRouter() {
                 path="/admin/catalogos"
                 element={<EnConstruccion titulo="Catálogos base" />}
               />
+
               <Route
-                path="/admin/reportes-ventas"
-                element={<EnConstruccion titulo="Reportes de ventas" />}
-              />
-              <Route
-                path="/admin/reportes-inventario"
-                element={<EnConstruccion titulo="Reportes de inventario" />}
+                path="/admin/perfil"
+                element={<EnConstruccion titulo="Perfil" />}
               />
             </Route>
 

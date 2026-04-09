@@ -19,6 +19,7 @@ import { submitVenta } from "../ventasForm.submit";
 import { FORMAS_PAGO_DEFAULT } from "./useVentasForm.helpers";
 import type {
   VentaClienteOption,
+  VentaCreateResponse,
   VentaFormaPagoOption,
 } from "../../../../types";
 import {
@@ -64,7 +65,9 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
   >(FORMAS_PAGO_DEFAULT);
 
   const aperturasVm = useVentasFormAperturas();
-  const productosMapRef = useRef<Map<number, VentaProductoBusquedaItem>>(new Map());
+  const productosMapRef = useRef<Map<number, VentaProductoBusquedaItem>>(
+    new Map(),
+  );
   const initKeyRef = useRef<string>("");
 
   useVentasFormEffects({
@@ -112,17 +115,30 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
   }, [props.modo, props.initialVenta]);
 
   const subtotal = useMemo(() => calcSubtotal(form.detalles), [form.detalles]);
+
   const descuentoTotal = useMemo(
     () => calcDescuentoTotal(form.detalles),
     [form.detalles],
   );
+
   const impuestosTotal = useMemo(
     () => calcImpuestosTotal(form.detalles),
     [form.detalles],
   );
+
   const total = useMemo(() => calcTotal(form.detalles), [form.detalles]);
+
   const montoPagado = useMemo(() => calcMontoPagado(form.pagos), [form.pagos]);
-  const cambio = useMemo(() => calcCambio(montoPagado, total), [montoPagado, total]);
+
+  const cambio = useMemo(
+    () => calcCambio(montoPagado, total),
+    [montoPagado, total],
+  );
+
+  const saldoPendiente = useMemo(() => {
+    const saldo = Number(total || 0) - Number(montoPagado || 0);
+    return saldo > 0 ? saldo : 0;
+  }, [total, montoPagado]);
 
   async function confirmarAbrirCajaDesdeVentas() {
     const apertura = await aperturasVm.confirmarAbrirApertura();
@@ -143,7 +159,7 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
     handlers.cerrarCobro(setCobroOpen, saving);
   }
 
-  async function guardar() {
+  async function guardar(): Promise<VentaCreateResponse | void> {
     if (readOnly) return;
 
     if (!defaultsLoaded) {
@@ -158,7 +174,7 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
       setMsgError("");
       setMsgInfoAccion("");
 
-      await submitVenta({
+      const response = await submitVenta({
         form,
         total,
         montoPagado,
@@ -169,11 +185,12 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
       });
 
       setCobroOpen(false);
-      props.onSuccess();
+      return response;
     } catch (e: unknown) {
       const msg =
         e instanceof Error ? e.message : "Ocurrió un error al guardar la venta.";
       setMsgError(msg);
+      return;
     } finally {
       setSaving(false);
     }
@@ -197,6 +214,7 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
     total,
     montoPagado,
     cambio,
+    saldoPendiente,
 
     guardar,
     abrirCobro,
@@ -213,6 +231,7 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
     eliminarPago: handlers.eliminarPago,
 
     toggleFacturacion: handlers.toggleFacturacion,
+    toggleCredito: handlers.toggleCredito,
 
     clienteQuery,
     setClienteQuery,
@@ -239,5 +258,5 @@ export function useVentasForm(props: VentasFormProps): VentasFormVm {
 
     formatMoney,
     formatDate,
-  } as VentasFormVm;
+  };
 }
