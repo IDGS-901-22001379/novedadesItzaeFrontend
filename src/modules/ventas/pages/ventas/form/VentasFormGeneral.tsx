@@ -1,4 +1,11 @@
 // src/modules/ventas/pages/ventas/form/VentasFormGeneral.tsx
+// Sección general del formulario de ventas.
+// Responsabilidades:
+// - Capturar datos base de la venta.
+// - Permitir búsqueda y selección de cliente.
+// - Mostrar vendedor, apertura y datos de fecha.
+// - Permitir marcar si la venta será a crédito.
+// - Permitir marcar si la venta será facturable.
 
 import { useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
@@ -263,6 +270,7 @@ export default function VentasFormGeneral({
           </div>
         </div>
 
+<<<<<<< Updated upstream
         {/* Facturación */}
         <div className="flex items-end">
           <label
@@ -280,6 +288,45 @@ export default function VentasFormGeneral({
             />
             Marcar para facturar
           </label>
+=======
+        {/* Crédito + facturable */}
+        <div className="flex items-end xl:col-span-1">
+          <div className="flex w-full gap-2">
+            <label
+              className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2 text-xs font-extrabold transition ${
+                form.es_credito
+                  ? "border border-amber-300 bg-amber-50 text-amber-800"
+                  : "border border-black/10 bg-white text-black/80"
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={Boolean(form.es_credito)}
+                onChange={(e) => updateField("es_credito", e.target.checked)}
+                disabled={readOnly}
+              />
+              <span className="truncate">Crédito</span>
+            </label>
+
+            <label
+              className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-2 py-2 text-xs font-extrabold transition ${
+                form.marcada_para_facturar
+                  ? "border border-sky-300 bg-sky-50 text-sky-800"
+                  : "border border-black/10 bg-white text-black/80"
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={Boolean(form.marcada_para_facturar)}
+                onChange={(e) =>
+                  updateField("marcada_para_facturar", e.target.checked)
+                }
+                disabled={readOnly}
+              />
+              <span className="truncate">Facturable</span>
+            </label>
+          </div>
+>>>>>>> Stashed changes
         </div>
 
         {/* Notas */}

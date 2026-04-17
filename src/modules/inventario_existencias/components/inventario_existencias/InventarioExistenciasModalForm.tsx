@@ -1,6 +1,8 @@
 // src/modules/inventario_existencias/components/inventario_existencias/InventarioExistenciasModalForm.tsx
 // Modal contenedor para formularios del módulo Inventario Existencias.
 // Responsabilidades: abrir/cerrar modal, pintar header con el color del tema y renderizar children.
+// Nota UI: el body del modal es responsive, activa scroll vertical en pantallas pequeñas
+// y fuerza colores claros/legibles dentro del body.
 
 import type { ReactNode } from "react";
 import type { InventarioExistenciasTheme } from "../../theme/inventarioExistenciasTheme";
@@ -26,7 +28,7 @@ export default function InventarioExistenciasModalForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
         {/* Header con el mismo color del tema que la tabla */}
         <div
           className={`flex items-center justify-between px-5 py-4 ${theme.headerBg} ${theme.headerText}`}
@@ -45,8 +47,22 @@ export default function InventarioExistenciasModalForm({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-5">{children}</div>
+        {/* Body responsive con scroll vertical y colores forzados */}
+        <div
+          className={[
+            "flex-1 overflow-y-auto bg-white p-5 text-slate-900",
+            "[&_label]:text-slate-900",
+            "[&_input]:text-slate-900",
+            "[&_select]:text-slate-900",
+            "[&_textarea]:text-slate-900",
+            "[&_p]:text-slate-900",
+            "[&_span]:text-slate-900",
+            "[&_input::placeholder]:text-slate-400",
+            "[&_textarea::placeholder]:text-slate-400",
+          ].join(" ")}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@
 // - Obtener el detalle completo de un producto seleccionado.
 // - Complementar la búsqueda rápida de /productos/buscar.
 // - Traer modelo, unidades por caja y configuración de venta por caja.
+// - Traer datos de facturación del producto, como facturable, IVA y claves SAT.
 
 import { httpClient } from "../../../services/http/httpClient";
 import type { VentaProductoOption } from "../types";
@@ -16,7 +17,13 @@ type ProductoDetalleApi = {
   modelo?: string | null;
   permite_venta_por_caja?: boolean | null;
   unidades_por_caja?: number | null;
+
+  facturable?: boolean | null;
   iva_tasa?: number | null;
+
+  clave_prod_serv_sat?: string | null;
+  clave_unidad_sat?: string | null;
+  unidad_cfdi?: string | null;
 };
 
 function toNullableString(value?: string | null): string | null {
@@ -60,6 +67,14 @@ export const ventasProductosDetalleService = {
 
       unidades_por_caja: toNullableNumber(data?.unidades_por_caja),
       permite_venta_por_caja: Boolean(data?.permite_venta_por_caja),
+
+      facturable: Boolean(data?.facturable),
+      es_facturable: Boolean(data?.facturable),
+      iva_tasa: toNullableNumber(data?.iva_tasa),
+
+      clave_prod_serv_sat: toNullableString(data?.clave_prod_serv_sat),
+      clave_unidad_sat: toNullableString(data?.clave_unidad_sat),
+      unidad_cfdi: toNullableString(data?.unidad_cfdi),
 
       // Estos se dejan sin tocar aquí porque vienen de otros servicios.
       precio_venta: null,

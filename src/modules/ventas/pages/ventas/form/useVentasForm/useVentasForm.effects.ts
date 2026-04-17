@@ -168,6 +168,7 @@ export function useVentasFormEffects({
       void searchVentasProductos({
         readOnly,
         productoQuery,
+        marcadaParaFacturar: Boolean(form.marcada_para_facturar),
         setLoadingProductos,
         setProductosEncontrados: (items) => {
           setProductosEncontrados(items);
@@ -186,6 +187,7 @@ export function useVentasFormEffects({
   }, [
     productoQuery,
     readOnly,
+    form.marcada_para_facturar,
     setLoadingProductos,
     setProductosEncontrados,
     productosMapRef,

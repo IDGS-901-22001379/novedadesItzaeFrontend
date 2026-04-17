@@ -11,19 +11,10 @@ type Props = {
     total: number;
     completadas: number;
     canceladas: number;
-    totalImporte: number;
   };
   loading: boolean;
   onNuevo: () => void;
 };
-
-function formatMoney(value: number): string {
-  return new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "MXN",
-    minimumFractionDigits: 2,
-  }).format(value || 0);
-}
 
 export default function VentasHeader({ resumen, loading, onNuevo }: Props) {
   return (
@@ -48,13 +39,6 @@ export default function VentasHeader({ resumen, loading, onNuevo }: Props) {
           <span>
             Canceladas:{" "}
             <span className="font-extrabold">{resumen.canceladas}</span>
-          </span>
-          <span className="mx-2">·</span>
-          <span>
-            Importe:{" "}
-            <span className="font-extrabold">
-              {formatMoney(resumen.totalImporte)}
-            </span>
           </span>
         </div>
       </div>

@@ -1,20 +1,20 @@
-// src/modules/traspasos/components/traspasos/TraspasosModalForm.tsx
-// Modal contenedor para formularios del módulo Traspasos.
+// src/modules/creditos_abonos/components/creditos_abonos/CreditosAbonosModalForm.tsx
+// Modal contenedor para formularios del módulo Créditos Abonos.
 // Responsabilidades: abrir/cerrar modal, pintar header con el color del tema y renderizar children.
 // Nota UI: el body del modal es responsive y activa scroll vertical en pantallas pequeñas.
 
 import type { ReactNode } from "react";
-import type { TraspasosTheme } from "../../theme/traspasosTheme";
+import type { CreditosAbonosTheme } from "../../theme/creditosAbonosTheme";
 
 type Props = {
   open: boolean;
   title: string;
-  theme: TraspasosTheme;
+  theme: CreditosAbonosTheme;
   onClose: () => void;
   children: ReactNode;
 };
 
-export default function TraspasosModalForm({
+export default function CreditosAbonosModalForm({
   open,
   title,
   theme,
@@ -28,13 +28,11 @@ export default function TraspasosModalForm({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl max-h-[90vh] flex flex-col">
-        {/* Header con el mismo color del tema que la tabla */}
         <div
           className={`flex items-center justify-between px-5 py-4 ${theme.headerBg} ${theme.headerText}`}
         >
           <div className="text-lg font-extrabold">{title}</div>
 
-          {/* X roja */}
           <button
             type="button"
             onClick={onClose}
@@ -46,10 +44,6 @@ export default function TraspasosModalForm({
           </button>
         </div>
 
-<<<<<<< Updated upstream
-        {/* Body */}
-        <div className="p-5">{children}</div>
-=======
         {/* Body responsive con scroll vertical */}
         <div
           className={[
@@ -64,7 +58,6 @@ export default function TraspasosModalForm({
         >
           {children}
         </div>
->>>>>>> Stashed changes
       </div>
     </div>
   );
