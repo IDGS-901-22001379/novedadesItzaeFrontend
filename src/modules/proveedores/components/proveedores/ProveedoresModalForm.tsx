@@ -1,6 +1,7 @@
 // src/modules/proveedores/components/proveedores/ProveedoresModalForm.tsx
 // Modal contenedor para formularios del módulo Proveedores.
 // Responsabilidades: abrir/cerrar modal, pintar header con el color del tema y renderizar children.
+// Nota UI: el body del modal es responsive y activa scroll vertical en pantallas pequeñas.
 
 import type { ReactNode } from "react";
 import type { ProveedoresTheme } from "../../theme/proveedoresTheme";
@@ -26,7 +27,7 @@ export default function ProveedoresModalForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl max-h-[90vh] flex flex-col">
         {/* Header con el mismo color del tema que la tabla */}
         <div
           className={`flex items-center justify-between px-5 py-4 ${theme.headerBg} ${theme.headerText}`}
@@ -45,10 +46,10 @@ export default function ProveedoresModalForm({
           </button>
         </div>
 
-        {/* Body forzado a colores claros/legibles */}
+        {/* Body responsive con scroll vertical */}
         <div
           className={[
-            "bg-white p-5 text-slate-900",
+            "flex-1 overflow-y-auto bg-white p-5 text-slate-900",
             "[&_label]:text-slate-900",
             "[&_input]:text-slate-900",
             "[&_select]:text-slate-900",

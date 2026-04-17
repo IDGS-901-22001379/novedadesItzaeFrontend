@@ -35,7 +35,6 @@ export default function EmpleadosTable({
           {/* Encabezado fuerte (sí debe heredar blanco) */}
           <thead className={`${theme.headerBg} ${theme.headerText}`}>
             <tr className="text-xs font-extrabold">
-              <th className="px-4 py-3">ID</th>
               <th className="px-4 py-3">Nombre</th>
               <th className="px-4 py-3">Puesto</th>
               <th className="px-4 py-3">Usuario</th>
@@ -48,8 +47,6 @@ export default function EmpleadosTable({
           <tbody className="divide-y divide-black/5 text-slate-900">
             {items.map((e) => (
               <tr key={e.id_empleado} className={`bg-white ${theme.rowHover}`}>
-                <td className="px-4 py-3 font-semibold">{e.id_empleado}</td>
-
                 <td className="px-4 py-3 font-semibold">{fullName(e)}</td>
 
                 <td className="px-4 py-3">{e.puesto}</td>

@@ -5,6 +5,7 @@
 // - Preparar la información visual del autocomplete.
 // - Regresar precios disponibles según tipo de cliente y presentación.
 // - Dejar lista la data base para la lógica de unidad/caja.
+// - Conservar datos de facturación como bandera de facturable e IVA.
 
 import { httpClient } from "../../../services/http/httpClient";
 import type { VentaProductoOption } from "../types";
@@ -50,6 +51,15 @@ type ProductoBuscarApiItem = {
 
   unidades_por_caja?: number | null;
   permite_venta_por_caja?: boolean | null;
+
+  facturable?: boolean | null;
+  es_facturable?: boolean | null;
+  iva?: number | null;
+  iva_tasa?: number | null;
+
+  clave_prod_serv_sat?: string | null;
+  clave_unidad_sat?: string | null;
+  unidad_cfdi?: string | null;
 };
 
 function toNullableString(value?: string | null): string | null {
@@ -108,6 +118,15 @@ export const ventasProductosService = {
 
         unidades_por_caja: toNullableNumber(item.unidades_por_caja),
         permite_venta_por_caja: item.permite_venta_por_caja ?? false,
+
+        facturable: item.facturable ?? item.es_facturable ?? false,
+        es_facturable: item.es_facturable ?? item.facturable ?? false,
+        iva: toNullableNumber(item.iva),
+        iva_tasa: toNullableNumber(item.iva_tasa),
+
+        clave_prod_serv_sat: toNullableString(item.clave_prod_serv_sat),
+        clave_unidad_sat: toNullableString(item.clave_unidad_sat),
+        unidad_cfdi: toNullableString(item.unidad_cfdi),
       };
     });
   },

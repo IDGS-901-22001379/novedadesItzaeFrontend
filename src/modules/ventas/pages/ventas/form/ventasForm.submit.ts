@@ -5,6 +5,7 @@
 // - Ejecutar validación previa.
 // - Enviar la venta al backend.
 // - Soportar ventas de contado y ventas a crédito.
+// - Reforzar validaciones cuando la venta esté marcada para facturar.
 
 import { ventasService } from "../../../services/ventas.service";
 import type {
@@ -31,6 +32,36 @@ function round2(value: number): number {
 function calcSaldoPendiente(total: number, montoPagado: number): number {
   const saldo = total - montoPagado;
   return saldo > 0 ? saldo : 0;
+}
+
+function validarFacturacionAntesDeEnviar(form: VentaFormState): string | null {
+  if (!form.marcada_para_facturar) return null;
+
+  if (!form.id_cliente_fiscal || Number(form.id_cliente_fiscal) <= 0) {
+    return "Te falta seleccionar el cliente fiscal.";
+  }
+
+  if (!form.id_forma_pago_principal || Number(form.id_forma_pago_principal) <= 0) {
+    return "Te falta seleccionar la forma de pago principal para facturación.";
+  }
+
+  if (!form.id_metodo_pago_cfdi || Number(form.id_metodo_pago_cfdi) <= 0) {
+    return "Te falta seleccionar el método de pago CFDI.";
+  }
+
+  const detalleSinIva = form.detalles.find(
+    (d) =>
+      Number(d.id_producto) > 0 &&
+      Number(d.cantidad) > 0 &&
+      Number(d.precio_unitario) > 0 &&
+      Number(d.iva_tasa) <= 0,
+  );
+
+  if (detalleSinIva) {
+    return "Hay productos facturables sin IVA configurado. Revisa los productos de la venta.";
+  }
+
+  return null;
 }
 
 export function buildVentaCreatePayload({
@@ -71,7 +102,6 @@ export function buildVentaCreatePayload({
       fuente_hora: form.fuente_hora,
 
       es_credito: esCredito,
-
       marcada_para_facturar: Boolean(form.marcada_para_facturar),
 
       id_cliente_fiscal: form.marcada_para_facturar
@@ -131,6 +161,12 @@ export async function submitVenta(params: {
 
   if (err) {
     throw new Error(err);
+  }
+
+  const errFacturacion = validarFacturacionAntesDeEnviar(params.form);
+
+  if (errFacturacion) {
+    throw new Error(errFacturacion);
   }
 
   const payload = buildVentaCreatePayload({

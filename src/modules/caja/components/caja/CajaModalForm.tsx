@@ -1,6 +1,7 @@
 // src/modules/caja/components/caja/CajaModalForm.tsx
 // Modal contenedor para formularios del módulo Caja.
 // Responsabilidades: abrir/cerrar modal, pintar header con el color del tema y renderizar children.
+// Nota UI: el body del modal es responsive y activa scroll vertical en pantallas pequeñas.
 
 import type { ReactNode } from "react";
 import type { CajaTheme } from "../../theme/cajaTheme";
@@ -26,7 +27,7 @@ export default function CajaModalForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
+      <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
         {/* Header con el mismo color del tema que la tabla */}
         <div
           className={`flex items-center justify-between px-5 py-4 ${theme.headerBg} ${theme.headerText}`}
@@ -45,8 +46,8 @@ export default function CajaModalForm({
           </button>
         </div>
 
-        {/* Body */}
-        <div className="p-5">{children}</div>
+        {/* Body responsive con scroll vertical */}
+        <div className="flex-1 overflow-y-auto p-5">{children}</div>
       </div>
     </div>
   );

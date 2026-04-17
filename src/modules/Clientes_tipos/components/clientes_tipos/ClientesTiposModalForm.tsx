@@ -1,6 +1,7 @@
 // src/modules/clientes_tipos/components/clientes_tipos/ClientesTiposModalForm.tsx
 // Modal contenedor para formularios del módulo Clientes Tipos.
 // Responsabilidades: abrir/cerrar modal, pintar header con el color del tema y renderizar children.
+// Nota UI: el body del modal es responsive y activa scroll vertical en pantallas pequeñas.
 
 import type { ReactNode } from "react";
 import type { ClientesTiposTheme } from "../../theme/clientesTiposTheme";
@@ -26,7 +27,7 @@ export default function ClientesTiposModalForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
+      <div className="relative flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
         {/* Header con el mismo color del tema que la tabla */}
         <div
           className={`flex items-center justify-between px-4 py-3 sm:px-5 sm:py-4 ${theme.headerBg} ${theme.headerText}`}
@@ -44,10 +45,10 @@ export default function ClientesTiposModalForm({
           </button>
         </div>
 
-        {/* Body forzado a colores claros/legibles */}
+        {/* Body responsive con scroll vertical */}
         <div
           className={[
-            "bg-white p-4 text-slate-900 sm:p-5",
+            "flex-1 overflow-y-auto bg-white p-4 text-slate-900 sm:p-5",
             "[&_label]:text-slate-900",
             "[&_input]:text-slate-900",
             "[&_select]:text-slate-900",

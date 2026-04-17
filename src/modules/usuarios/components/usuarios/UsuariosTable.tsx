@@ -30,7 +30,6 @@ export default function UsuariosTable({
           {/* Encabezado fuerte (sí debe heredar blanco) */}
           <thead className={`${theme.headerBg} ${theme.headerText}`}>
             <tr className="text-xs font-extrabold">
-              <th className="px-4 py-3">ID</th>
               <th className="px-4 py-3">Usuario</th>
               <th className="px-4 py-3">Nombre en ticket</th>
               <th className="px-4 py-3">Rol</th>
@@ -43,7 +42,6 @@ export default function UsuariosTable({
           <tbody className="divide-y divide-black/5 text-slate-900">
             {items.map((u) => (
               <tr key={u.id_usuario} className={`bg-white ${theme.rowHover}`}>
-                <td className="px-4 py-3 font-semibold">{u.id_usuario}</td>
                 <td className="px-4 py-3 font-semibold">{u.username}</td>
                 <td className="px-4 py-3">{u.nombre_en_ticket}</td>
                 <td className="px-4 py-3 font-semibold">

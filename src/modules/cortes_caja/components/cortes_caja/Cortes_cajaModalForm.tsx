@@ -1,6 +1,7 @@
 // src/modules/cortes_caja/components/cortes_caja/Cortes_cajaModalForm.tsx
 // Modal contenedor para formularios del módulo Cortes de Caja.
 // Se encarga de abrir y cerrar el modal, pintar el encabezado con el color del tema y renderizar el contenido interno.
+// Nota UI: el body del modal es responsive y activa scroll vertical en pantallas pequeñas.
 
 import type { ReactNode } from "react";
 import type { CortesCajaTheme } from "../../theme/cortesCajaTheme";
@@ -26,7 +27,7 @@ export default function Cortes_cajaModalForm({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl">
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-xl max-h-[90vh] flex flex-col">
         <div
           className={`flex items-center justify-between px-5 py-4 ${theme.headerBg} ${theme.headerText}`}
         >
@@ -45,7 +46,7 @@ export default function Cortes_cajaModalForm({
 
         <div
           className={[
-            "bg-white p-5 text-slate-900",
+            "flex-1 overflow-y-auto bg-white p-5 text-slate-900",
             "[&_label]:text-slate-900",
             "[&_input]:text-slate-900",
             "[&_select]:text-slate-900",

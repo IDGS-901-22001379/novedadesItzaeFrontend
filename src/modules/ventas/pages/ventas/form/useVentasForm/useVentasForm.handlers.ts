@@ -45,6 +45,10 @@ type Params = {
   productosMapRef: React.MutableRefObject<Map<number, VentaProductoBusquedaItem>>;
 };
 
+function isProductoFacturable(producto: VentaProductoBusquedaItem): boolean {
+  return Boolean(producto.facturable ?? producto.es_facturable ?? false);
+}
+
 export function createVentasFormHandlers({
   readOnly,
   form,
@@ -141,6 +145,7 @@ export function createVentasFormHandlers({
 
   function toggleFacturacion(checked: boolean) {
     setForm((prev) => setFacturacionState(prev, checked));
+    setMsgError("");
   }
 
   function toggleCredito(checked: boolean) {
@@ -230,6 +235,13 @@ export function createVentasFormHandlers({
       }
     }
 
+    if (form.marcada_para_facturar && !isProductoFacturable(productoCompleto)) {
+      setMsgError(
+        "Este producto no es facturable. Si la venta está marcada como facturable, solo puedes agregar productos facturables.",
+      );
+      return;
+    }
+
     productosMapRef.current.set(productoCompleto.id_producto, productoCompleto);
 
     const firstEmptyIndex = form.detalles.findIndex(
@@ -242,6 +254,7 @@ export function createVentasFormHandlers({
     selectVentasProducto({
       producto: productoCompleto,
       tipoClienteLabel: form.tipo_cliente_label,
+      marcadaParaFacturar: form.marcada_para_facturar,
       setForm,
     });
 

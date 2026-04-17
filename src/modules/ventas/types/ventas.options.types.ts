@@ -3,6 +3,7 @@
 // Responsabilidades:
 // - Definir opciones de clientes, productos, pagos, CFDI y aperturas.
 // - Servir de base para autocompletes, selects y defaults del formulario.
+// - Incluir datos necesarios para ventas facturables, como bandera de facturable e IVA.
 
 export interface VentaClienteOption {
   id_cliente: number;
@@ -47,6 +48,19 @@ export interface VentaProductoOption {
   // Configuración de empaque / presentación.
   unidades_por_caja?: number | null;
   permite_venta_por_caja?: boolean | null;
+
+  // Facturación / impuestos.
+  facturable?: boolean | null;
+  iva?: number | null;
+  iva_tasa?: number | null;
+
+  // Compatibilidad temporal por si algún endpoint aún manda este nombre.
+  es_facturable?: boolean | null;
+
+  // Campos opcionales para CFDI.
+  clave_prod_serv_sat?: string | null;
+  clave_unidad_sat?: string | null;
+  unidad_cfdi?: string | null;
 }
 
 export interface VentaFormaPagoOption {
